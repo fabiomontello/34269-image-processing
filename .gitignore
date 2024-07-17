@@ -164,3 +164,4 @@ cython_debug/
 data
 .vscode
 *.ipynb
+logs

@@ -43,6 +43,10 @@ class Transforms:
                 A.HorizontalFlip(p=0.5),
                 A.ColorJitter(p=0.3),
                 A.ShiftScaleRotate(p=0.3),
+                A.RandomBrightnessContrast(p=0.3),
+                A.ChannelShuffle(p=0.3),
+                A.RGBShift(p=0.3),
+                A.ChannelDropout(p=0.3),
                 ToTensorV2(),
             ]
         )
