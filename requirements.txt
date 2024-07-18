@@ -7,3 +7,7 @@ pillow
 pandas
 timm
 vit-pytorch
+albumentations
+tqdm
+tensorboard 
+tensorboardx

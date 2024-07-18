@@ -166,3 +166,4 @@ data
 *.ipynb
 logs
 weights
+*.sh
