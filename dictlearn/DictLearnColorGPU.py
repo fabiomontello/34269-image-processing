@@ -120,10 +120,10 @@ def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches):
     reshapedCb = patchesCb.reshape(-1,patchSze[0]*patchSze[1])
     reshapedCr = patchesCr.reshape(-1,patchSze[0]*patchSze[1])
     
-    print(patchesCb.shape)
+    print(dictCb.shape)
     
-    coderCb = SparseCoder(dictionary=dictCb.components_, transform_algorithm='lasso_lars', transform_alpha=1.0)
-    coderCr = SparseCoder(dictionary=dictCr.components_, transform_algorithm='lasso_lars', transform_alpha=1.0)
+    coderCb = SparseCoder(dictionary=dictCb, transform_algorithm='lasso_lars', transform_alpha=1.0)
+    coderCr = SparseCoder(dictionary=dictCr, transform_algorithm='lasso_lars', transform_alpha=1.0)
 
     # transform Cb and Cr channels
     transCb = coderCb.transform(reshapedCb)
