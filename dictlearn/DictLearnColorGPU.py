@@ -37,7 +37,7 @@ def dictLearn(signals,atoms,sparse):
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 10
+N = 1000
 trainSub = trainImg[:N]
 
 # convert to YCrCb
@@ -125,9 +125,9 @@ def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches):
     coderCb = SparseCoder(dictionary=dictCb)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
     coderCr = SparseCoder(dictionary=dictCr)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
 
-    print(patchesCb.shape)
-    print(reshapedCb.shape)
-    print(dictCb.shape)
+    #print(patchesCb.shape)
+    #print(reshapedCb.shape)
+    #print(dictCb.shape)
     # transform Cb and Cr channels
     transCb = coderCb.transform(reshapedCb)
     transCr = coderCr.transform(reshapedCr)
