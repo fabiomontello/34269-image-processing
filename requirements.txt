@@ -9,4 +9,5 @@ timm
 scikit-learn
 tensorflow
 nvidia-cuda-nvcc
+time
 git+https://github.com/mukheshpugal/dictlearn_gpu.git@master
