@@ -160,8 +160,8 @@ from sklearn.feature_extraction.image import reconstruct_from_patches_2d
 def test(x):
     for i in range(x):
         # test image
-        #imgRGB = trainImg[N+i+100]
-        imgRGB = cv2.imread('./roald.jpg', cv2.IMREAD_COLOR)
+        imgRGB = trainImg[N+i+100]
+        #imgRGB = cv2.imread('./roald.jpg', cv2.IMREAD_COLOR)
         #print(imgRGB.shape)
         # convert to greyscale
         greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
@@ -206,50 +206,3 @@ test(10)
 # 
 
 # In[58]:
-
-
-from imagenet1k import load_imagenet_1k
-from transforms import Transforms
-
-EPOCHS = 50
-LR = 0.001
-BATCH_SIZE = 16
-DATA_PATH = "data/imagenet-val/imagenet-val/"
-RGB_MEAN = torch.Tensor((0.485, 0.456, 0.406))
-RGB_STD = torch.Tensor((0.229, 0.224, 0.225))
-
-if __name__ == "__main__":
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    train_transform = Transforms(train=True, image_size=224)
-    test_transform = Transforms(train=False, image_size=224)
-    train_loader, val_loader, test_loader = load_imagenet_1k(
-        data_path=DATA_PATH,
-        transform_train=train_transform,
-        transform_test=test_transform,
-        batch_size=BATCH_SIZE,
-        num_workers=4,
-    )
-
-
-# In[ ]:
-
-
-from sktime.performance_metrics.forecasting import mean_relative_absolute_error as mrae
-from sklearn.metrics import root_mean_squared_error as rmse
-from skimage.metrics import structural_similarity as ssim
-from skimage.metrics import mean_squared_error
-from skimage.metrics import peak_signal_noise_ratio as pgnr
-
-
-
-print(f'RMSE: {rmse(imgRGB,colorizedImg):.2f}')
-print(f'MRAE: {mrae(imgRGB,colorizedImg):.2f}')
-print(f'SSIM: {ssim(imgRGB,colorizedImg):.2f}')
-print(f'PGNR: {pgnr(imgRGB,colorizedImg):.2f}')
-
-
-# In[ ]:
-
-
-
-
