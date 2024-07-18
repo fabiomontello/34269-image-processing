@@ -6,3 +6,5 @@ torchvision
 pillow
 pandas
 timm
+scikit-learn
+tensorflow

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[22]:
+# In[6]:
 
 
 import numpy as np
@@ -12,14 +12,12 @@ from joblib import Parallel, delayed
 import matplotlib.pyplot as plt
 from tensorflow.keras.datasets import cifar10
 import multiprocessing
-from sklearn.decomposition import SparseCoder
-from sklearn.feature_extraction.image import reconstruct_from_patches_2d
 
 # load CIFAR-10 dataset
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 100  
+N = 500
 trainSub = trainImg[:N]
 
 # convert to YCrCb
@@ -54,31 +52,25 @@ patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
 # number of dict atoms
 numComp = 100
 
+
+# In[ ]:
+
+
 # init DictionaryLearning models
 dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
+
+
+# In[ ]:
+
+
 dictCb = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
+
+
+# In[ ]:
+
 
 # learn dictionaries and transform patches
 transCr = dictCr.fit(patchCr2D).transform(patchCr2D)
-transCb = dictCb.fit(patchCb2D).transform(patchCb2D)
-
-
-# In[ ]:
-
-
-dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
-
-
-# In[ ]:
-
-
-dictCb = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
-
-
-# In[ ]:
-
-
-transCr = dictCr.fit(patchCr2D).transform(patchCr2D)
 
 
 # In[ ]:
@@ -87,7 +79,7 @@ transCr = dictCr.fit(patchCr2D).transform(patchCr2D)
 transCb = dictCb.fit(patchCb2D).transform(patchCb2D)
 
 
-# In[42]:
+# In[ ]:
 
 
 # function to colorize greyscale image using YCbCr
@@ -131,32 +123,45 @@ def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches):
     return colorImgRGB
 
 
-# In[47]:
+# In[11]:
 
 
-# test image
-imgRGB = trainImg[N+4]#cv2.imread('./roald.jpg', cv2.IMREAD_COLOR)
-#print(imgRGB.shape)
-# convert to greyscale
-greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
-# colorize using dictionary learning
-colorizedImg = colorizeImg(greyImg, dictCb, dictCr, sze, 10000000)
+from sklearn.decomposition import SparseCoder
+from sklearn.feature_extraction.image import reconstruct_from_patches_2d
+
+def test(x):
+    for i in range(x):
+        # test image
+        imgRGB = trainImg[N+i+100]
+        #imgRGB = cv2.imread('./roald.jpg', cv2.IMREAD_COLOR)
+        #print(imgRGB.shape)
+        # convert to greyscale
+        greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
+        # colorize using dictionary learning
+        colorizedImg = colorizeImg(greyImg, dictCb, dictCr, sze, 10000000)
+        
+        
+        # plot images
+        fig, axes = plt.subplots(1,3,figsize=(15,5))
+        axes[0].imshow(imgRGB)
+        axes[0].set_title('Original Image')
+        axes[0].axis('off')
+        
+        axes[1].imshow(greyImg,cmap='grey')
+        axes[1].set_title('Greyscale Image')
+        axes[1].axis('off')
+        
+        axes[2].imshow(colorizedImg)
+        axes[2].set_title('Recolorized Image')
+        axes[2].axis('off')
+        plt.savefig('img'+str(i)+'.png')
 
 
-# plot images
-fig, axes = plt.subplots(1,3,figsize=(15,5))
-axes[0].imshow(imgRGB)
-axes[0].set_title('Original Image')
-axes[0].axis('off')
 
-axes[1].imshow(greyImg)
-axes[1].set_title('Greyscale Image')
-axes[1].axis('off')
+# In[12]:
 
-axes[2].imshow(colorizedImg)
-axes[2].set_title('Recolorized Image')
-axes[2].axis('off')
 
+test(20)
 
 
 # Num Images = 100<br>
