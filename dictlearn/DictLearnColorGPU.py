@@ -37,7 +37,7 @@ def dictLearn(signals,atoms,sparse):
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 200
+N = 10
 trainSub = trainImg[:N]
 
 # convert to YCrCb
@@ -131,8 +131,8 @@ def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches):
     transCr = coderCr.transform(reshapedCr)
 
     # reconstruct patches
-    recPatchCb = np.dot(transCb, dictCb.components_)
-    recPatchCr = np.dot(transCr, dictCr.components_)
+    recPatchCb = np.dot(transCb, dictCb)
+    recPatchCr = np.dot(transCr, dictCr)
 
     # return to original shape
     recPatchCb = recPatchCb.reshape(patchesCb.shape)
