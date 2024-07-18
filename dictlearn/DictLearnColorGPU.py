@@ -184,7 +184,7 @@ def test(x):
         axes[2].imshow(colorizedImg)
         axes[2].set_title('Recolorized Image')
         axes[2].axis('off')
-        plt.savefig('/Users/zacharymartin/34269-image-processing/dictlearn/img'+str(i)+'.png')
+        plt.savefig('./img'+str(i)+'.png')
 
 
 
