@@ -84,14 +84,14 @@ numComp = 100
 
 # init DictionaryLearning models
 #dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
-dictCr=dictLearn(patchCr2D,numpComp,8)
+dictCr=dictLearn(patchCr2D,numComp,8)
 
 
 # In[ ]:
 
 
 #dictCb = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
-dictCb=dictLearn(patchCb2D,numpComp,8)
+dictCb=dictLearn(patchCb2D,numComp,8)
 
 
 # In[ ]:
