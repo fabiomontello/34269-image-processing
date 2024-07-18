@@ -6,3 +6,4 @@ torchvision
 pillow
 pandas
 timm
+vit-pytorch

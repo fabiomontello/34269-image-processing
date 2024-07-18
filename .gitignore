@@ -165,3 +165,4 @@ data
 .vscode
 *.ipynb
 logs
+weights
