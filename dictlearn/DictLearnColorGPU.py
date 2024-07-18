@@ -14,10 +14,11 @@ from tensorflow.keras.datasets import cifar10
 import multiprocessing
 from dictlearn_gpu import train_dict
 from dictlearn_gpu.utils import dct_dict_1d
-
+from time import time
 
 # In[5]:
 
+t0=time()
 
 def dictLearn(signals,atoms,sparse):
 
@@ -206,3 +207,4 @@ test(10)
 # 
 
 # In[58]:
+print('done in %.2f minutes' % (time() - t0)/60.0)
