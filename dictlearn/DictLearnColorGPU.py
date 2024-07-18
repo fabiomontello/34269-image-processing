@@ -184,7 +184,7 @@ def test(x):
         axes[2].imshow(colorizedImg)
         axes[2].set_title('Recolorized Image')
         axes[2].axis('off')
-        plt.savefig('img'+str(i)+'.png')
+        plt.savefig('./img'+str(i)+'.png')
 
 
 
@@ -208,4 +208,4 @@ test(10)
 # 
 
 # In[58]:
-print('done in %.2f minutes' % (time() - t0)/60.0)
+print('done in %.2f minutes' % str((time() - t0)/60.0))
