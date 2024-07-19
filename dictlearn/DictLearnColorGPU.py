@@ -26,8 +26,8 @@ def dictLearn(signals,atoms,sparse):
         n_atoms=atoms,
         size=signals.shape[0],
     )
-    new_dictionary, errors, iters = train_dict(signals, dictionary, sparsity_target=sparse)
-    return new_dictionary,errors
+    updated_dictionary, errors, iters = train_dict(signals, dictionary, sparsity_target=sparse)
+    return updated_dictionary
 
 
 # In[4]:
@@ -42,7 +42,7 @@ trainSub = trainImg[:N]
 
 # convert to YCrCb
 def convert_to_ycrcb(img):
-    return cv2.cvtColor(img, cv2.COLOR_BGR2YCrCb)
+    return cv2.cvtColor(img, cv2.COLOR_RGB2YCrCb)
 
 numCores = multiprocessing.cpu_count() # trying to use more CPU cores for faster training
 trainImgYCrCb = Parallel(n_jobs=numCores)(delayed(convert_to_ycrcb)(img) for img in trainSub)
@@ -112,7 +112,7 @@ transCb = dictCb#.fit(patchCb2D).transform(patchCb2D)
 
 
 # function to colorize greyscale image using YCbCr
-def colorizeImg(greyImg, dictCb, dictCr,errCr,errCb, patchSze,mxPatches,numComp):
+def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     # get patches
     patchesCb = imgPatch([greyImg], patchSze, mxPatches)
     patchesCr = imgPatch([greyImg], patchSze, mxPatches)
@@ -133,8 +133,8 @@ def colorizeImg(greyImg, dictCb, dictCr,errCr,errCb, patchSze,mxPatches,numComp)
     transCr = coderCr.transform(reshapedCr)
     print(transCb.shape)
     # reconstruct patches
-    recPatchCb = np.dot(transCb, dictCb)+errCb
-    recPatchCr = np.dot(transCr, dictCr)+errCr
+    recPatchCb = np.dot(transCb, dictCb)
+    recPatchCr = np.dot(transCr, dictCr)
     print(recPatchCb.shape)
 
     # return to original shape
@@ -171,7 +171,7 @@ def test(x):
         # convert to greyscale
         greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
         # colorize using dictionary learning
-        colorizedImg = colorizeImg(greyImg, dictCb, dictCr,errCr,errCb, sze, 10000000,numComp)
+        colorizedImg = colorizeImg(greyImg, dictCb, dictCr, sze, 10000000,numComp)
         
         
         # plot images
