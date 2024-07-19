@@ -122,8 +122,8 @@ def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches,numComp):
     reshapedCr = patchesCr.reshape(patchesCr.shape[0], -1)
 
     
-    coderCb = SparseCoder(dictionary=dictCb, transform_algorithm='lasso_lars')#, transform_alpha=10.0)
-    coderCr = SparseCoder(dictionary=dictCr, transform_algorithm='lasso_lars')#, transform_alpha=10.0)
+    coderCb = SparseCoder(dictionary=dictCb)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    coderCr = SparseCoder(dictionary=dictCr)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
 
     print(patchesCb.shape)
     print(reshapedCb.shape)
@@ -131,14 +131,16 @@ def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches,numComp):
     # transform Cb and Cr channels
     transCb = coderCb.transform(reshapedCb)
     transCr = coderCr.transform(reshapedCr)
-
+    print(transCb.shape)
     # reconstruct patches
     recPatchCb = np.dot(transCb, dictCb)
     recPatchCr = np.dot(transCr, dictCr)
+    print(recPatchCb.shape)
 
     # return to original shape
     recPatchCb = recPatchCb.reshape(patchesCb.shape)
     recPatchCr = recPatchCr.reshape(patchesCr.shape)
+    print(recPatchCb.shape)
 
     # reconstruct channels from patches
     recCb = reconstruct_from_patches_2d(recPatchCb, greyImg.shape)
