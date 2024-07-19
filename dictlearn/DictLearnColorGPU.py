@@ -68,7 +68,7 @@ print(patchCr.shape)
 # reshape for dict learning
 patchCr2D = patchCr.reshape(patchCr.shape[0], -1)
 patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
-
+print(patchCr2D.shape)
 # number of dict atoms
 numComp = 100#sze[0]*sze[1]#100
 
@@ -118,8 +118,8 @@ def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches,numComp):
     patchesCr = imgPatch([greyImg], patchSze, mxPatches)
 
     # reshape to match dictionary
-    reshapedCb = patchesCb.reshape(-1,numComp)
-    reshapedCr = patchesCr.reshape(-1,numComp)
+    reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)
+    reshapedCr = patchesCr.reshape(patchesCr.shape[0], -1)
 
     
     coderCb = SparseCoder(dictionary=dictCb)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
