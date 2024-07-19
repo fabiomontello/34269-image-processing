@@ -27,7 +27,7 @@ def dictLearn(signals,atoms,sparse):
         size=signals.shape[0],
     )
     new_dictionary, errors, iters = train_dict(signals, dictionary, sparsity_target=sparse)
-    return new_dictionary
+    return new_dictionary,errors
 
 
 # In[4]:
@@ -85,14 +85,14 @@ numComp = sze[0]*sze[1]#100
 
 # init DictionaryLearning models
 #dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
-dictCr=dictLearn(patchCr2D,numComp,16)
+dictCr,errCr=dictLearn(patchCr2D,numComp,16)
 
 
 # In[ ]:
 
 
 #dictCb = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
-dictCb=dictLearn(patchCb2D,numComp,16)
+dictCb,errCb=dictLearn(patchCb2D,numComp,16)
 
 
 # In[ ]:
@@ -112,7 +112,7 @@ transCb = dictCb#.fit(patchCb2D).transform(patchCb2D)
 
 
 # function to colorize greyscale image using YCbCr
-def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches,numComp):
+def colorizeImg(greyImg, dictCb, dictCr,errCr,errCb, patchSze,mxPatches,numComp):
     # get patches
     patchesCb = imgPatch([greyImg], patchSze, mxPatches)
     patchesCr = imgPatch([greyImg], patchSze, mxPatches)
@@ -133,8 +133,8 @@ def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches,numComp):
     transCr = coderCr.transform(reshapedCr)
     print(transCb.shape)
     # reconstruct patches
-    recPatchCb = np.dot(transCb, dictCb)
-    recPatchCr = np.dot(transCr, dictCr)
+    recPatchCb = np.dot(transCb, dictCb)+errCb
+    recPatchCr = np.dot(transCr, dictCr)+errCr
     print(recPatchCb.shape)
 
     # return to original shape
