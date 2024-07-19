@@ -70,7 +70,7 @@ patchCr2D = patchCr.reshape(patchCr.shape[0], -1)
 patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
 
 # number of dict atoms
-numComp = sze[0]*sze[1]#100
+numComp = 100#sze[0]*sze[1]#100
 
 
 
@@ -112,14 +112,14 @@ transCb = dictCb#.fit(patchCb2D).transform(patchCb2D)
 
 
 # function to colorize greyscale image using YCbCr
-def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches):
+def colorizeImg(greyImg, dictCb, dictCr, patchSze,mxPatches,numComp):
     # get patches
     patchesCb = imgPatch([greyImg], patchSze, mxPatches)
     patchesCr = imgPatch([greyImg], patchSze, mxPatches)
 
     # reshape to match dictionary
-    reshapedCb = patchesCb.reshape(-1,patchSze[0]*patchSze[1])
-    reshapedCr = patchesCr.reshape(-1,patchSze[0]*patchSze[1])
+    reshapedCb = patchesCb.reshape(-1,numComp)
+    reshapedCr = patchesCr.reshape(-1,numComp)
 
     
     coderCb = SparseCoder(dictionary=dictCb)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
@@ -169,7 +169,7 @@ def test(x):
         # convert to greyscale
         greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
         # colorize using dictionary learning
-        colorizedImg = colorizeImg(greyImg, dictCb, dictCr, sze, 10000000)
+        colorizedImg = colorizeImg(greyImg, dictCb, dictCr, sze, 10000000,numComp)
         
         
         # plot images
