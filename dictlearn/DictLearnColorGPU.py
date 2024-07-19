@@ -120,17 +120,19 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     # reshape to match dictionary
     reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)
     reshapedCr = patchesCr.reshape(patchesCr.shape[0], -1)
+    transCb=patchesCb
+    transCr=patchesCr
 
     
-    coderCb = SparseCoder(dictionary=dictCb)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
-    coderCr = SparseCoder(dictionary=dictCr)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    #coderCb = SparseCoder(dictionary=dictCb)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    #coderCr = SparseCoder(dictionary=dictCr)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
 
     print(patchesCb.shape)
     print(reshapedCb.shape)
     print(dictCb.shape)
     # transform Cb and Cr channels
-    transCb = coderCb.transform(reshapedCb)
-    transCr = coderCr.transform(reshapedCr)
+    #transCb = coderCb.transform(reshapedCb)
+    #transCr = coderCr.transform(reshapedCr)
     print(transCb.shape)
     # reconstruct patches
     recPatchCb = np.dot(transCb, dictCb)
@@ -195,20 +197,3 @@ def test(x):
 
 
 test(6)
-
-
-# Num Images = 100<br>
-# Dict Atoms = 100<br>
-# Patch Size = (3,3)<br>
-# started around 9:35am<br>
-# ended 9:57am<br>
-# 
-# Num Images = 100<br>
-# Dict Atoms = 100<br>
-# Patch Size = (9,9)<br>
-# started 10:09 am<br>
-# ended 11:46am<br>
-# 
-
-# In[58]:
-print('done in %.2f minutes' % ((time() - t0)/60.0))
