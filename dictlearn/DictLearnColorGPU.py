@@ -58,17 +58,19 @@ def imgPatch(imgs, szePatch, maxPatch):
     patches = Parallel(n_jobs=numCores)(delayed(extract)(img) for img in imgs)
     return np.concatenate(patches, axis=0)
 
-sze = (8, 8)  # size of patches
+sze = (32, 32)  # size of patches
 mx = 10000000  # max number of patches
 
 # extract patches
 patchCr = imgPatch(trainCr, sze, mx)
 patchCb = imgPatch(trainCb, sze, mx)
-print(patchCr.shape)
+print('patchCb')
+print(patchCb.shape)
 # reshape for dict learning
 patchCr2D = patchCr.reshape(patchCr.shape[0], -1)
 patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
-print(patchCr2D.shape)
+print('patchCb2D')
+print(patchCb2D.shape)
 # number of dict atoms
 numComp = sze[0]*sze[1]#100
 
@@ -120,23 +122,29 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     # reshape to match dictionary
     reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)
     reshapedCr = patchesCr.reshape(patchesCr.shape[0], -1)
-    transCb=reshapedCb
-    transCr=reshapedCr
+    #transCb=reshapedCb
+    #transCr=reshapedCr
 
     
-    #coderCb = SparseCoder(dictionary=dictCb)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
-    #coderCr = SparseCoder(dictionary=dictCr)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    coderCb = SparseCoder(dictionary=dictCb)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    coderCr = SparseCoder(dictionary=dictCr)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
 
+    print('patchesCb')
     print(patchesCb.shape)
+    print('reshapedCb')
     print(reshapedCb.shape)
+    print('dictCb')
     print(dictCb.shape)
+
     # transform Cb and Cr channels
-    #transCb = coderCb.transform(reshapedCb)
-    #transCr = coderCr.transform(reshapedCr)
+    transCb = coderCb.transform(reshapedCb)
+    transCr = coderCr.transform(reshapedCr)
+    print('transCb')
     print(transCb.shape)
     # reconstruct patches
     recPatchCb = np.dot(transCb, dictCb)
     recPatchCr = np.dot(transCr, dictCr)
+    print('recPatchCb')
     print(recPatchCb.shape)
 
     # return to original shape
@@ -150,6 +158,7 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
 
     # combine channels (Y=greyImg)
     colorImg=np.array([greyImg,recCr,recCb]).T
+    print('colorImg')
     print(colorImg.shape)
     # convert to RGB
     colorImgRGB = cv2.cvtColor(colorImg.astype(np.uint8), cv2.COLOR_YCrCb2RGB)
