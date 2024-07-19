@@ -192,7 +192,7 @@ def test(x):
 # In[12]:
 
 
-test(10)
+test(6)
 
 
 # Num Images = 100<br>
