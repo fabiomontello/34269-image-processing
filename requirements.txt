@@ -11,3 +11,8 @@ tensorflow
 nvidia-cuda-nvcc
 time
 git+https://github.com/mukheshpugal/dictlearn_gpu.git@master
+vit-pytorch
+albumentations
+tqdm
+tensorboard 
+tensorboardx
