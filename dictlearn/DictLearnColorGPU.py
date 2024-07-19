@@ -37,7 +37,7 @@ def dictLearn(signals,atoms,sparse):
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 100
+N = 10
 trainSub = trainImg[:N]
 
 # convert to YCrCb
