@@ -111,8 +111,8 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     #transCr=reshapedCr
 
     
-    coderCb = SparseCoder(dictionary=dictCb,transform_n_nonzero_coefs=numComp)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
-    coderCr = SparseCoder(dictionary=dictCr,transform_n_nonzero_coefs=numComp)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    coderCb = SparseCoder(dictionary=dictCb,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    coderCr = SparseCoder(dictionary=dictCr,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
 
     print('patchesCb')
     print(patchesCb.shape)
