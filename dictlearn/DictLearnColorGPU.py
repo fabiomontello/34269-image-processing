@@ -37,7 +37,7 @@ def dictLearn(signals,atoms,sparse):
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 10
+N = 100
 trainSub = trainImg[:N]
 
 # convert to YCrCb
@@ -72,7 +72,7 @@ patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
 print('patchCb2D')
 print(patchCb2D.shape)
 # number of dict atoms
-numComp = 100#sze[0]*sze[1]#100
+numComp = sze[0]*sze[1]#100
 
 # init DictionaryLearning models
 #dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
@@ -111,8 +111,8 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     #transCr=reshapedCr
 
     
-    coderCb = SparseCoder(dictionary=dictCb,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
-    coderCr = SparseCoder(dictionary=dictCr,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    coderCb = SparseCoder(dictionary=dictCb)#,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    coderCr = SparseCoder(dictionary=dictCr)#,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
 
     print('patchesCb')
     print(patchesCb.shape)
