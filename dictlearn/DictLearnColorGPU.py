@@ -120,8 +120,8 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     # reshape to match dictionary
     reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)
     reshapedCr = patchesCr.reshape(patchesCr.shape[0], -1)
-    transCb=patchesCb
-    transCr=patchesCr
+    transCb=reshapedCb
+    transCr=reshapedCr
 
     
     #coderCb = SparseCoder(dictionary=dictCb)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
