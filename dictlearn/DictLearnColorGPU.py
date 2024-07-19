@@ -171,7 +171,7 @@ def test(x):
         # convert to greyscale
         greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
         # colorize using dictionary learning
-        colorizedImg = colorizeImg(greyImg, dictCb, dictCr, sze, 10000000,numComp)
+        colorizedImg = colorizeImg(greyImg, dictCb, dictCr,errCr,errCb, sze, 10000000,numComp)
         
         
         # plot images
