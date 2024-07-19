@@ -58,7 +58,7 @@ def imgPatch(imgs, szePatch, maxPatch):
     patches = Parallel(n_jobs=numCores)(delayed(extract)(img) for img in imgs)
     return np.concatenate(patches, axis=0)
 
-sze = (32, 32)  # size of patches
+sze = (4, 4)  # size of patches
 mx = 10000000  # max number of patches
 
 # extract patches
@@ -72,26 +72,11 @@ patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
 print('patchCb2D')
 print(patchCb2D.shape)
 # number of dict atoms
-numComp = sze[0]*sze[1]#100
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
+numComp = 100#sze[0]*sze[1]#100
 
 # init DictionaryLearning models
 #dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
 dictCr=dictLearn(patchCr2D,numComp,16)
-
-
-# In[ ]:
-
 
 #dictCb = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
 dictCb=dictLearn(patchCb2D,numComp,16)
@@ -126,8 +111,8 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     #transCr=reshapedCr
 
     
-    coderCb = SparseCoder(dictionary=dictCb)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
-    coderCr = SparseCoder(dictionary=dictCr)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    coderCb = SparseCoder(dictionary=dictCb,transform_n_nonzero_coefs=numComp)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    coderCr = SparseCoder(dictionary=dictCr,transform_n_nonzero_coefs=numComp)#, transform_algorithm='lasso_lars', transform_alpha=10.0)
 
     print('patchesCb')
     print(patchesCb.shape)
@@ -205,4 +190,4 @@ def test(x):
 # In[12]:
 
 
-test(6)
+test(1)
