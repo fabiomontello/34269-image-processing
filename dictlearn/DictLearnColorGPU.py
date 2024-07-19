@@ -169,7 +169,7 @@ def test(x):
         #imgRGB = cv2.imread('./roald.jpg', cv2.IMREAD_COLOR)
         #print(imgRGB.shape)
         # convert to greyscale
-        greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
+        greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_RGB2GRAY)
         # colorize using dictionary learning
         colorizedImg = colorizeImg(greyImg, dictCb, dictCr, sze, 10000000,numComp)
         
