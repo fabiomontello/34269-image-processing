@@ -70,7 +70,7 @@ patchCr2D = patchCr.reshape(patchCr.shape[0], -1)
 patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
 
 # number of dict atoms
-numComp = 100
+numComp = sze[0]*sze[1]#100
 
 
 
