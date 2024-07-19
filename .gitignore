@@ -167,3 +167,4 @@ data
 logs
 weights
 *.sh
+notebook

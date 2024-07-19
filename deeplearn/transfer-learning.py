@@ -8,18 +8,18 @@ from albumentations.pytorch.transforms import ToTensorV2
 from imagenet1k import load_imagenet_1k
 from PIL import Image
 from torch import nn
-from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
-from transforms import Transforms
+from transforms import TransformsPretrain
 from utils import FeatureExtractor, rgb_to_ycbcr
 
 # Get the current date and time
 current_time = datetime.datetime.now()
 formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
-EPOCHS = 50
-LR = 0.0001
+EPOCHS = 500
+LR = 0.001
 BATCH_SIZE = 172
 DATA_PATH = "/home/fabmo/works/34269-image-processing/data/imagenet-val/imagenet-val/"
 RGB_MEAN = torch.Tensor((0.485, 0.456, 0.406)).view(1, 3, 1, 1)
@@ -33,8 +33,8 @@ if __name__ == "__main__":
     RGB_MEAN = RGB_MEAN.to(device)
     RGB_STD = RGB_STD.to(device)
 
-    train_transform = Transforms(train=True, image_size=224)
-    test_transform = Transforms(train=False, image_size=224)
+    train_transform = TransformsPretrain(train=True, image_size=224)
+    test_transform = TransformsPretrain(train=False, image_size=224)
 
     # Load the ImageNet dataset
     train_loader, val_loader, test_loader = load_imagenet_1k(
@@ -45,15 +45,15 @@ if __name__ == "__main__":
         num_workers=4,
     )
     teacher = timm.create_model(
-        "vit_base_patch16_224",
+        "vit_base_patch16_224.mae",
         pretrained=True,
         num_classes=0,  # remove classifier nn.Linear
     )
     teacher = FeatureExtractor(teacher).to(device)
 
     student = timm.create_model(
-        "vit_base_patch16_224",
-        pretrained=False,
+        "vit_base_patch16_224.mae",
+        pretrained=True,
         num_classes=0,  # remove classifier nn.Linear
     ).to(device)
     student = FeatureExtractor(student).to(device)
@@ -63,7 +63,23 @@ if __name__ == "__main__":
     # transforms = timm.data.create_transform(**data_config, is_training=False)
 
     optimizer = torch.optim.Adam(student.parameters(), lr=LR)
-    scheduler = ReduceLROnPlateau(optimizer, "min")
+    scheduler = SequentialLR(
+        optimizer,
+        schedulers=[
+            LinearLR(
+                optimizer,
+                start_factor=0.001,
+                end_factor=1,
+                total_iters=int(0.02 * EPOCHS),
+            ),
+            CosineAnnealingLR(
+                optimizer,
+                T_max=int(0.98 * EPOCHS),
+                eta_min=0.05 * LR,
+            ),
+        ],
+        milestones=[int(0.05 * EPOCHS)],
+    )
     criterion = nn.L1Loss()
     best_loss = 1000
     patience = 0
@@ -113,7 +129,7 @@ if __name__ == "__main__":
             avg_loss += loss.item()
         avg_loss /= len(val_loader)
         print(f"Epoch: {epoch}, Loss: {avg_loss}")
-        scheduler.step(avg_loss)
+        scheduler.step()
 
         writer.add_scalar("Loss/val", avg_loss, epoch)
         patience += 1
