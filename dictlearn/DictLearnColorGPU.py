@@ -189,7 +189,7 @@ def test(x):
         r=imgRGB[0]
         g=imgRGB[1]
         b=imgRGB[2]
-        empt=np.zeroes_like(r)
+        empt=np.zeros_like(r)
 
                 # plot images
         fig, axes = plt.subplots(1,3,figsize=(15,5))
