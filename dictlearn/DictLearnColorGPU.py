@@ -68,13 +68,13 @@ patchCb = imgPatch(trainCb, sze, mx)
 print('patchCb')
 print(patchCb.shape)
 # reshape for dict learning
-print(patchCb)
+#print(patchCb)
 patchY2D = patchY.reshape(patchY.shape[0], -1)
 patchCr2D = patchCr.reshape(patchCr.shape[0], -1)
 patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
 print('patchCb2D')
 print(patchCb2D.shape)
-print(patchCb2D)
+#print(patchCb2D)
 # number of dict atoms
 numComp = sze[0]*sze[1]#100
 
@@ -131,8 +131,8 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
 
     # transform Cb and Cr channels
     transY = coderY.transform(reshapedY)
-    transCb = coderCb.transform(reshapedCb)
-    transCr = coderCr.transform(reshapedCr)
+    transCb = coderCb.transform(transY @ reshapedCb)
+    transCr = coderCr.transform(transY@reshapedCr)
     print('transCb')
     print(transCb.shape)
     # reconstruct patches
@@ -156,7 +156,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     print('recCb')
     print(recCb)
     # combine channels (Y=greyImg)
-    colorImg=np.array([recY,recCr,recCb]).T*255
+    colorImg=np.array([greyImg,recCr,recCb]).T*255
     print('colorImg')
     print(colorImg.shape)
     # convert to RGB
@@ -205,4 +205,4 @@ def test(x):
 
 
 test(1)
-print('done in %.2f minutes' % (time() - t0)/60.0)
+print('done in %.2f minutes' % str((time() - t0)/60.0))
