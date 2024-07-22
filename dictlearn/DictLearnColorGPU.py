@@ -181,8 +181,8 @@ def test(x):
         axes[1].set_title('Greyscale Image')
         axes[1].axis('off')
         
-        axes[2].imshow(colorizedImg)
-        axes[2].set_title('Recolorized Image', vmin=0, vmax=255)
+        axes[2].imshow(colorizedImg, vmin=0, vmax=255)
+        axes[2].set_title('Recolorized Image')
         axes[2].axis('off')
         plt.savefig('./img'+str(i)+'.png')
 
