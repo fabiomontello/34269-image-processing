@@ -47,8 +47,8 @@ numCores = multiprocessing.cpu_count() # trying to use more CPU cores for faster
 trainImgYCrCb = Parallel(n_jobs=numCores)(delayed(convert_to_ycrcb)(img) for img in trainSub)
 
 # separate channels (Y not needed because it will remain unchanged)
-trainCr = np.array([img[:, :, 1] for img in trainImgYCrCb]) # Cr channel
-trainCb = np.array([img[:, :, 2] for img in trainImgYCrCb]) # Cb channel
+trainCr = np.array([img[:, :, 1] for img in trainImgYCrCb])/255 # Cr channel
+trainCb = np.array([img[:, :, 2] for img in trainImgYCrCb])/255 # Cb channel
 
 # extract patches (parallel)
 def imgPatch(imgs, szePatch, maxPatch):
@@ -67,8 +67,8 @@ print('patchCb')
 print(patchCb.shape)
 # reshape for dict learning
 print(patchCb)
-patchCr2D = patchCr.reshape(patchCr.shape[0], -1)/240
-patchCb2D = patchCb.reshape(patchCb.shape[0], -1)/240
+patchCr2D = patchCr.reshape(patchCr.shape[0], -1)
+patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
 print('patchCb2D')
 print(patchCb2D.shape)
 print(patchCb2D)
@@ -102,12 +102,14 @@ transCb = dictCb#.fit(patchCb2D).transform(patchCb2D)
 # function to colorize greyscale image using YCbCr
 def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     # get patches
+    patchesCb=patchesCb/255
+    patchesCr=patchesCr/255
     patchesCb = imgPatch([greyImg], patchSze, mxPatches)
     patchesCr = imgPatch([greyImg], patchSze, mxPatches)
 
     # reshape to match dictionary
-    reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)/240
-    reshapedCr = patchesCr.reshape(patchesCr.shape[0], -1)/240
+    reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)
+    reshapedCr = patchesCr.reshape(patchesCr.shape[0], -1)
     #transCb=reshapedCb
     #transCr=reshapedCr
 
@@ -134,13 +136,13 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(recPatchCb.shape)
 
     # return to original shape
-    recPatchCb = recPatchCb.reshape(patchesCb.shape)*240
-    recPatchCr = recPatchCr.reshape(patchesCr.shape)*240
+    recPatchCb = recPatchCb.reshape(patchesCb.shape)
+    recPatchCr = recPatchCr.reshape(patchesCr.shape)
     print(recPatchCb.shape)
 
     # reconstruct channels from patches
-    recCb = reconstruct_from_patches_2d(recPatchCb, greyImg.shape)
-    recCr = reconstruct_from_patches_2d(recPatchCr, greyImg.shape)
+    recCb = reconstruct_from_patches_2d(recPatchCb, greyImg.shape)*255
+    recCr = reconstruct_from_patches_2d(recPatchCr, greyImg.shape)*255
 
     # combine channels (Y=greyImg)
     colorImg=np.array([greyImg,recCr,recCb]).T
