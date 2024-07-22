@@ -158,7 +158,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     print('recCb')
     print(recCb)
     # combine channels (Y=greyImg)
-    colorImg=np.array([greyImg,recCr,recCb]).T*255
+    colorImg=np.array([greyImg+recY,recCr,recCb]).T*255
     print('colorImg')
     print(colorImg.shape)
     # convert to RGB
