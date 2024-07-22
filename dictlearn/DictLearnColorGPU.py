@@ -59,7 +59,7 @@ def imgPatch(imgs, szePatch, maxPatch):
     patches = Parallel(n_jobs=numCores)(delayed(extract)(img) for img in imgs)
     return np.concatenate(patches, axis=0)
 
-sze = (8, 8)  # size of patches
+sze = (4, 4)  # size of patches
 mx = 10000000  # max number of patches
 
 # extract patches
@@ -78,7 +78,7 @@ print(patchCb2D.shape)
 #print(patchCb2D)
 # number of dict atoms
 numComp = sze[0]*sze[1]#100
-sparseTarget=8
+sparseTarget=numComp
 # init DictionaryLearning models
 dictY=dictLearn(patchY2D,numComp,sparseTarget)
 #dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
