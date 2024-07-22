@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
 
 
 import numpy as np
@@ -15,8 +14,8 @@ import multiprocessing
 from dictlearn_gpu import train_dict
 from dictlearn_gpu.utils import dct_dict_1d
 from time import time
+from sklearn.preprocessing import normalize
 
-# In[5]:
 
 t0=time()
 
@@ -37,7 +36,7 @@ def dictLearn(signals,atoms,sparse):
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 25
+N = 10
 trainSub = trainImg[:N]
 
 # convert to YCrCb
@@ -67,10 +66,12 @@ patchCb = imgPatch(trainCb, sze, mx)
 print('patchCb')
 print(patchCb.shape)
 # reshape for dict learning
-patchCr2D = patchCr.reshape(patchCr.shape[0], -1)
-patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
+print(patchCb)
+patchCr2D = patchCr.reshape(patchCr.shape[0], -1)/240
+patchCb2D = patchCb.reshape(patchCb.shape[0], -1)/240
 print('patchCb2D')
 print(patchCb2D.shape)
+print(patchCb2D)
 # number of dict atoms
 numComp = sze[0]*sze[1]#100
 
@@ -105,8 +106,8 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     patchesCr = imgPatch([greyImg], patchSze, mxPatches)
 
     # reshape to match dictionary
-    reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)
-    reshapedCr = patchesCr.reshape(patchesCr.shape[0], -1)
+    reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)/240
+    reshapedCr = patchesCr.reshape(patchesCr.shape[0], -1)/240
     #transCb=reshapedCb
     #transCr=reshapedCr
 
@@ -133,8 +134,8 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(recPatchCb.shape)
 
     # return to original shape
-    recPatchCb = recPatchCb.reshape(patchesCb.shape)
-    recPatchCr = recPatchCr.reshape(patchesCr.shape)
+    recPatchCb = recPatchCb.reshape(patchesCb.shape)*240
+    recPatchCr = recPatchCr.reshape(patchesCr.shape)*240
     print(recPatchCb.shape)
 
     # reconstruct channels from patches
