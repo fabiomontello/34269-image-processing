@@ -59,7 +59,7 @@ def imgPatch(imgs, szePatch, maxPatch):
     patches = Parallel(n_jobs=numCores)(delayed(extract)(img) for img in imgs)
     return np.concatenate(patches, axis=0)
 
-sze = (4, 4)  # size of patches
+sze = (16, 16)  # size of patches
 mx = 10000000  # max number of patches
 
 # extract patches
