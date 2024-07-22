@@ -140,7 +140,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(recPatchCb)
 
     # reconstruct channels from patches
-    recY = reconstruct_from_patches_2d(recPatchY, greyImg.shape)
+    recY = greyImg#reconstruct_from_patches_2d(recPatchY, greyImg.shape)
     recCb = reconstruct_from_patches_2d(recPatchCb, greyImg.shape)
     recCr = reconstruct_from_patches_2d(recPatchCr, greyImg.shape)
     print('recCb')
@@ -212,5 +212,5 @@ def test(x):
 
 
 
-test(1)
+test(3)
 print('done in %.2f minutes' % ((time() - t0)/60.0))
