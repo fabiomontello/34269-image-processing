@@ -197,7 +197,7 @@ def test(x):
         axes[0].set_title('Original Image')
         axes[0].axis('off')
         
-        axes[1].imshow(imgRGB,cmaps = 'Greens'))
+        axes[1].imshow(imgRGB,cmaps = 'Greens')
         axes[1].set_title('Greyscale Image')
         axes[1].axis('off')
         
