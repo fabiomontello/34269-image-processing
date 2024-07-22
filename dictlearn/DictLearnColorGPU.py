@@ -85,11 +85,11 @@ dictCb=dictLearn(patchCb2D,numComp,sparseTarget)
 
 
 # learn dictionaries and transform patches
-transY = patchY2D.T@dictY
-transCr = patchCr2D.T@dictCr#.fit(patchCr2D).transform(patchCr2D)
+transY = (patchY2D.T@dictY).T
+transCr = (patchCr2D.T@dictCr).T#.fit(patchCr2D).transform(patchCr2D)
 print('transCr')
 print(transCr.shape)
-transCb = patchCb2D.T@dictCb#.fit(patchCb2D).transform(patchCb2D)
+transCb = (patchCb2D.T@dictCb).T#.fit(patchCb2D).transform(patchCb2D)
 
 
 # function to colorize greyscale image using YCbCr
