@@ -15,6 +15,7 @@ from dictlearn_gpu import train_dict
 from dictlearn_gpu.utils import dct_dict_1d
 from time import time
 from sklearn.preprocessing import normalize
+from sklearn.decomposition import sparse_encode
 
 
 t0=time()
@@ -121,6 +122,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     coderY = SparseCoder(dictionary=dictY)
     coderCb = SparseCoder(dictionary=dictCb)#,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
     coderCr = SparseCoder(dictionary=dictCr)#,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    coder = sparse_encode(patchesY, dictY)
 
     print('patchesCb')
     print(patchesCb.shape)
@@ -130,7 +132,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(dictCb.shape)
 
     # transform Cb and Cr channels
-    transY = coderY.transform(reshapedY)
+    transY = coder.transform(reshapedY)
     transCb = transY#coderCb.transform(reshapedCb)
     transCr = transY#coderCr.transform(reshapedCr)
     print('transCb')
