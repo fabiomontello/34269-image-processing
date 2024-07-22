@@ -74,7 +74,7 @@ print('patchCb2D')
 print(patchCb2D.shape)
 #print(patchCb2D)
 # number of dict atoms
-numComp = 200#sze[0]*sze[1]#100
+numComp = sze[0]*sze[1]#100
 sparseTarget=numComp
 # init DictionaryLearning models
 dictY=dictLearn(patchY2D,numComp,sparseTarget)
@@ -149,6 +149,8 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(colorImg.shape)
     # convert to RGB
     colorImgRGB=cv2.cvtColor(colorImg.astype(np.uint8), cv2.COLOR_YCrCb2RGB)
+    plt.imshow(colorImg)
+    plt.savefig('./ycrcb.png')
     colorImgRGB=np.fliplr(colorImgRGB)
     colorImgRGB=np.rot90(colorImgRGB)
     return colorImgRGB
