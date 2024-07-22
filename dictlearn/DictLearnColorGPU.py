@@ -83,7 +83,6 @@ sparseTarget=numComp
 dictY=dictLearn(patchY2D,numComp,sparseTarget)
 #dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
 dictCr=dictLearn(patchCr2D,numComp,sparseTarget)
-
 #dictCb = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
 dictCb=dictLearn(patchCb2D,numComp,sparseTarget)
 
@@ -139,8 +138,8 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(transCb.shape)
     # reconstruct patches
     recPatchY = transY@dictY#np.dot(transY, dictY)
-    recPatchCb = transCb@dictCb#np.dot(transCb, dictCb)
-    recPatchCr = transCr@dictCr#np.dot(transCr, dictCr)
+    recPatchCb = transY@dictCb#np.dot(transCb, dictCb)
+    recPatchCr = transY@dictCr#np.dot(transCr, dictCr)
     print('recPatchCb')
     print(recPatchCb.shape)
 
