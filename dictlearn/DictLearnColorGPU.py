@@ -132,7 +132,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(dictCb.shape)
 
     # transform Cb and Cr channels
-    transY = coder.transform(reshapedY)
+    transY = coder#.transform(reshapedY)
     transCb = transY#coderCb.transform(reshapedCb)
     transCr = transY#coderCr.transform(reshapedCr)
     print('transCb')
