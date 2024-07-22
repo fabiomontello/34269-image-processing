@@ -47,6 +47,7 @@ numCores = multiprocessing.cpu_count() # trying to use more CPU cores for faster
 trainImgYCrCb = Parallel(n_jobs=numCores)(delayed(convert_to_ycrcb)(img) for img in trainSub)
 
 # separate channels (Y not needed because it will remain unchanged)
+trainY = np.array([img[:, :, 0] for img in trainImgYCrCb])/255 # Y channel
 trainCr = np.array([img[:, :, 1] for img in trainImgYCrCb])/255 # Cr channel
 trainCb = np.array([img[:, :, 2] for img in trainImgYCrCb])/255 # Cb channel
 
@@ -61,12 +62,14 @@ sze = (8, 8)  # size of patches
 mx = 10000000  # max number of patches
 
 # extract patches
+patchY = imgPatch(trainY, sze, mx)
 patchCr = imgPatch(trainCr, sze, mx)
 patchCb = imgPatch(trainCb, sze, mx)
 print('patchCb')
 print(patchCb.shape)
 # reshape for dict learning
 print(patchCb)
+patchY2D = patchY.reshape(patchY.shape[0], -1)
 patchCr2D = patchCr.reshape(patchCr.shape[0], -1)
 patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
 print('patchCb2D')
@@ -76,6 +79,7 @@ print(patchCb2D)
 numComp = sze[0]*sze[1]#100
 
 # init DictionaryLearning models
+dictY=dictLearn(patchY2D,numComp,16)
 #dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
 dictCr=dictLearn(patchCr2D,numComp,16)
 
@@ -100,19 +104,21 @@ transCb = dictCb#.fit(patchCb2D).transform(patchCb2D)
 
 
 # function to colorize greyscale image using YCbCr
-def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
+def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     # get patches
     greyImg=greyImg/255
     patchesCb = imgPatch([greyImg], patchSze, mxPatches)
     patchesCr = patchesCb #imgPatch([greyImg], patchSze, mxPatches)
+    patchesY=patchesCb
 
     # reshape to match dictionary
     reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)
     reshapedCr = reshapedCb #patchesCr.reshape(patchesCr.shape[0], -1)
+    reshapedY=reshapedCb
     #transCb=reshapedCb
     #transCr=reshapedCr
 
-    
+    coderY = SparseCoder(dictionary=dictCY)
     coderCb = SparseCoder(dictionary=dictCb)#,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
     coderCr = SparseCoder(dictionary=dictCr)#,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
 
@@ -124,29 +130,33 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(dictCb.shape)
 
     # transform Cb and Cr channels
+    transY = coderY.transform(reshapedY)
     transCb = coderCb.transform(reshapedCb)
     transCr = coderCr.transform(reshapedCr)
     print('transCb')
     print(transCb.shape)
     # reconstruct patches
-    recPatchCb = np.dot(transCb, dictCb)
-    recPatchCr = np.dot(transCr, dictCr)
+    recPatchY = transY@dictY#np.dot(transY, dictY)
+    recPatchCb = transCb@dictCb#np.dot(transCb, dictCb)
+    recPatchCr = transCr@dictCr#np.dot(transCr, dictCr)
     print('recPatchCb')
     print(recPatchCb.shape)
 
     # return to original shape
+    recPatchY = recPatchY.reshape(patchesY.shape)
     recPatchCb = recPatchCb.reshape(patchesCb.shape)
     recPatchCr = recPatchCr.reshape(patchesCr.shape)
     print(recPatchCb.shape)
     print(recPatchCb)
 
     # reconstruct channels from patches
+    recY = reconstruct_from_patches_2d(recPatchY, greyImg.shape)
     recCb = reconstruct_from_patches_2d(recPatchCb, greyImg.shape)
     recCr = reconstruct_from_patches_2d(recPatchCr, greyImg.shape)
     print('recCb')
     print(recCb)
     # combine channels (Y=greyImg)
-    colorImg=np.array([greyImg,recCr,recCb]).T*255
+    colorImg=np.array([recY,recCr,recCb]).T*255
     print('colorImg')
     print(colorImg.shape)
     # convert to RGB
@@ -165,13 +175,13 @@ from sklearn.feature_extraction.image import reconstruct_from_patches_2d
 def test(x):
     for i in range(x):
         # test image
-        imgRGB = trainImg[N+i+100]
+        imgRGB = trainImg[i]#N+i+100]
         #imgRGB = cv2.imread('./roald.jpg', cv2.IMREAD_COLOR)
         #print(imgRGB.shape)
         # convert to greyscale
         greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_RGB2GRAY)
         # colorize using dictionary learning
-        colorizedImg = colorizeImg(greyImg, dictCb, dictCr, sze, 10000000,numComp)
+        colorizedImg = colorizeImg(greyImg,dictY, dictCb, dictCr, sze, 10000000,numComp)
         
         
         # plot images
@@ -195,3 +205,4 @@ def test(x):
 
 
 test(1)
+print('done in %.2f minutes' % (time() - t0)/60.0)
