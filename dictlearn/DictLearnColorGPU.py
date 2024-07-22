@@ -37,7 +37,7 @@ def dictLearn(signals,atoms,sparse):
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 15
+N = 30
 trainSub = trainImg[:N]
 
 # convert to YCrCb
@@ -120,9 +120,9 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     #transCr=reshapedCr
 
     coderY = SparseCoder(dictionary=dictY)
-    coderCb = SparseCoder(dictionary=dictCb)#,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
-    coderCr = SparseCoder(dictionary=dictCr)#,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
-    coder = sparse_encode(reshapedY, dictY)
+    #coderCb = SparseCoder(dictionary=dictCb)#,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    #coderCr = SparseCoder(dictionary=dictCr)#,transform_n_nonzero_coefs=patchSze[0]*patchSze[1])#, transform_algorithm='lasso_lars', transform_alpha=10.0)
+    #coder = sparse_encode(reshapedY, dictY)
 
     print('patchesCb')
     print(patchesCb.shape)
@@ -132,7 +132,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(dictCb.shape)
 
     # transform Cb and Cr channels
-    transY = coder#.transform(reshapedY)
+    transY = coderY.transform(reshapedY)
     transCb = transY#coderCb.transform(reshapedCb)
     transCr = transY#coderCr.transform(reshapedCr)
     print('transCb')
