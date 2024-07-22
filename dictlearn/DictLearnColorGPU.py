@@ -138,11 +138,13 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     recPatchCb = recPatchCb.reshape(patchesCb.shape)
     recPatchCr = recPatchCr.reshape(patchesCr.shape)
     print(recPatchCb.shape)
+    print(recPatchCb)
 
     # reconstruct channels from patches
     recCb = reconstruct_from_patches_2d(recPatchCb, greyImg.shape)*255
     recCr = reconstruct_from_patches_2d(recPatchCr, greyImg.shape)*255
-
+    print('recCb')
+    print(recCb)
     # combine channels (Y=greyImg)
     colorImg=np.array([greyImg,recCr,recCb]).T
     print('colorImg')
