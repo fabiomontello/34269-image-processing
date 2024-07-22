@@ -42,7 +42,7 @@ images = [cv2.imread(file) for file in files]
 #creating a collection with the available images
 col = images#load_images_from_folder(imgDir)
 
-trainSub = np.array([cv2.imread('./testImg.JPG',cv2.IMREAD_COLOR)])
+trainSub = images#np.array([cv2.imread('./testImg.JPG',cv2.IMREAD_COLOR)])
 
 def dictLearn(signals,atoms,sparse):
 
