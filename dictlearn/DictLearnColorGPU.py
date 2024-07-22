@@ -186,6 +186,26 @@ def test(x):
         axes[2].axis('off')
         plt.savefig('./img'+str(i)+'.png')
 
+        r=imgRGB[0]
+        g=imgRGB[1]
+        b=imgRGB[2]
+        empt=np.zeroes_like(r)
+
+                # plot images
+        fig, axes = plt.subplots(1,3,figsize=(15,5))
+        axes[0].imshow([r,empt,empt])
+        axes[0].set_title('Original Image')
+        axes[0].axis('off')
+        
+        axes[1].imshow([empt,g,empt])
+        axes[1].set_title('Greyscale Image')
+        axes[1].axis('off')
+        
+        axes[2].imshow([empt,empt,b])
+        axes[2].set_title('Recolorized Image')
+        axes[2].axis('off')
+        plt.savefig('./rgb'+str(i)+'.png')
+
 
 
 test(1)
