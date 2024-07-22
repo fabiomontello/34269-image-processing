@@ -74,7 +74,7 @@ print('patchCb2D')
 print(patchCb2D.shape)
 #print(patchCb2D)
 # number of dict atoms
-numComp = sze[0]*sze[1]#100
+numComp = 200#sze[0]*sze[1]#100
 sparseTarget=numComp
 # init DictionaryLearning models
 dictY=dictLearn(patchY2D,numComp,sparseTarget)
@@ -85,9 +85,11 @@ dictCb=dictLearn(patchCb2D,numComp,sparseTarget)
 
 
 # learn dictionaries and transform patches
-transCr = dictCr#.fit(patchCr2D).transform(patchCr2D)
-
-transCb = dictCb#.fit(patchCb2D).transform(patchCb2D)
+transY = patchY2D*dictY
+transCr = patchCr2D*dictCr#.fit(patchCr2D).transform(patchCr2D)
+print('transCr')
+print(transCr.shape)
+transCb = patchCb2D*dictCb#.fit(patchCb2D).transform(patchCb2D)
 
 
 # function to colorize greyscale image using YCbCr
@@ -170,7 +172,7 @@ def test(x):
         # colorize using dictionary learning
         #imgs=cv2.cvtColor(imgRGB, cv2.COLOR_RGB2YCrCb)
         #colorizedImg = cv2.cvtColor(imgs, cv2.COLOR_YCrCb2RGB)#
-        colorizedImg=colorizeImg(greyImg,dictY, dictCb, dictCr, sze, 10000000,numComp)
+        colorizedImg=colorizeImg(greyImg,transY, transCb, transCr, sze, 10000000,numComp)
         
         
         # plot images
