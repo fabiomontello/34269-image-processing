@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-
-
 import numpy as np
 import cv2
 from sklearn.feature_extraction.image import extract_patches_2d
@@ -16,9 +13,36 @@ from dictlearn_gpu.utils import dct_dict_1d
 from time import time
 from sklearn.preprocessing import normalize
 from sklearn.decomposition import sparse_encode
+import glob
 
 
 t0=time()
+
+# load CIFAR-10 dataset
+(trainImg, _), (_, _) = cifar10.load_data()
+
+# reduce size of dataset
+N = 5000
+trainSub = trainImg[:N]
+
+def load_images_from_folder(folder):
+    images = []
+    for filename in os.listdir(folder):
+        img = cv2.imread(os.path.join(folder,filename),cv2.IMREAD_COLOR)
+        if img is not None:
+            images.append(img)
+    return images
+
+imgDir = '../data/imagenet-val/imagenet-val/*.jpeg'
+files=[]
+[files.extend(glob.glob(imgDir))]
+
+images = [cv2.imread(file) for file in files]
+
+#creating a collection with the available images
+col = images#load_images_from_folder(imgDir)
+
+trainSub = np.array([cv2.imread('./testImg.JPG',cv2.IMREAD_COLOR)])
 
 def dictLearn(signals,atoms,sparse):
 
@@ -28,14 +52,6 @@ def dictLearn(signals,atoms,sparse):
     )
     updated_dictionary, errors, iters = train_dict(signals, dictionary, sparsity_target=sparse)
     return updated_dictionary
-
-
-# load CIFAR-10 dataset
-(trainImg, _), (_, _) = cifar10.load_data()
-
-# reduce size of dataset
-N = 10000
-trainSub = trainImg[:N]
 
 # convert to YCrCb
 def convert_to_ycrcb(img):
