@@ -56,7 +56,7 @@ def imgPatch(imgs, szePatch, maxPatch):
     patches = Parallel(n_jobs=numCores)(delayed(extract)(img) for img in imgs)
     return np.concatenate(patches, axis=0)
 
-sze = (12, 12)  # size of patches
+sze = (4, 4)  # size of patches
 mx = 10000000  # max number of patches
 
 # extract patches
@@ -133,7 +133,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(recPatchCb.shape)
 
     # return to original shape
-    recPatchY = recPatchY.reshape(patchesY.shape)
+    recPatchY = greyImg#recPatchY.reshape(patchesY.shape)
     recPatchCb = recPatchCb.reshape(patchesCb.shape)
     recPatchCr = recPatchCr.reshape(patchesCr.shape)
     print(recPatchCb.shape)
