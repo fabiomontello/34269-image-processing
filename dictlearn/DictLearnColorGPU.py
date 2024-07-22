@@ -37,7 +37,7 @@ def dictLearn(signals,atoms,sparse):
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 100
+N = 25
 trainSub = trainImg[:N]
 
 # convert to YCrCb
@@ -58,7 +58,7 @@ def imgPatch(imgs, szePatch, maxPatch):
     patches = Parallel(n_jobs=numCores)(delayed(extract)(img) for img in imgs)
     return np.concatenate(patches, axis=0)
 
-sze = (4, 4)  # size of patches
+sze = (8, 8)  # size of patches
 mx = 10000000  # max number of patches
 
 # extract patches
@@ -146,7 +146,7 @@ def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     print('colorImg')
     print(colorImg.shape)
     # convert to RGB
-    colorImgRGB = cv2.cvtColor(colorImg.astype(np.uint8), cv2.COLOR_YCrCb2RGB)
+    colorImgRGB=cv2.cvtColor(colorImg.astype(np.uint8), cv2.COLOR_YCrCb2RGB)
     colorImgRGB=np.fliplr(colorImgRGB)
     colorImgRGB=np.rot90(colorImgRGB)
     return colorImgRGB
