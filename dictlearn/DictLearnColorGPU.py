@@ -30,9 +30,6 @@ def dictLearn(signals,atoms,sparse):
     return updated_dictionary
 
 
-# In[4]:
-
-
 # load CIFAR-10 dataset
 (trainImg, _), (_, _) = cifar10.load_data()
 
@@ -77,7 +74,7 @@ print('patchCb2D')
 print(patchCb2D.shape)
 #print(patchCb2D)
 # number of dict atoms
-numComp = sze[0]*sze[1]#100
+numComp = 200#sze[0]*sze[1]#100
 sparseTarget=numComp
 # init DictionaryLearning models
 dictY=dictLearn(patchY2D,numComp,sparseTarget)
@@ -87,20 +84,10 @@ dictCr=dictLearn(patchCr2D,numComp,sparseTarget)
 dictCb=dictLearn(patchCb2D,numComp,sparseTarget)
 
 
-# In[ ]:
-
-
 # learn dictionaries and transform patches
 transCr = dictCr#.fit(patchCr2D).transform(patchCr2D)
 
-
-# In[ ]:
-
-
 transCb = dictCb#.fit(patchCb2D).transform(patchCb2D)
-
-
-# In[ ]:
 
 
 # function to colorize greyscale image using YCbCr
@@ -167,9 +154,6 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     return colorImgRGB
 
 
-# In[11]:
-
-
 from sklearn.decomposition import SparseCoder
 from sklearn.feature_extraction.image import reconstruct_from_patches_2d
 
@@ -200,9 +184,6 @@ def test(x):
         axes[2].axis('off')
         plt.savefig('./img'+str(i)+'.png')
 
-
-
-# In[12]:
 
 
 test(1)
