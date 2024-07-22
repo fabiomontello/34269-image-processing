@@ -168,8 +168,9 @@ def test(x):
         # convert to greyscale
         greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_RGB2GRAY)
         # colorize using dictionary learning
-        imgs=cv2.cvtColor(imgRGB, cv2.COLOR_RGB2YCrCb)
-        colorizedImg = cv2.cvtColor(imgs, cv2.COLOR_YCrCb2RGB)#colorizeImg(greyImg,dictY, dictCb, dictCr, sze, 10000000,numComp)
+        #imgs=cv2.cvtColor(imgRGB, cv2.COLOR_RGB2YCrCb)
+        #colorizedImg = cv2.cvtColor(imgs, cv2.COLOR_YCrCb2RGB)#
+        colorizedImg=colorizeImg(greyImg,dictY, dictCb, dictCr, sze, 10000000,numComp)
         
         
         # plot images
