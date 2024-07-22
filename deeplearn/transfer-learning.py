@@ -124,6 +124,7 @@ if __name__ == "__main__":
             teacher_data = data.to(device)
             teacher_data = (teacher_data - (RGB_MEAN * 255)) / (RGB_STD * 255)
             student_data = rgb_to_ycbcr(teacher_data)
+            student_data = (student_data - YCRCB_MEAN) / YCRCB_STD
             with torch.no_grad():
                 teacher_output = teacher(teacher_data)
                 student_output = student(student_data)
