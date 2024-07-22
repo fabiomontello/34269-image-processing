@@ -151,13 +151,13 @@ def benchmark(image, imageTrue, wantDeltaE=True):
         delta_E = None
     return rmse_total, mrae_total, delta_E
 
-def getScores(getDelta=True):
+def getScores(getDelta=True, filepath=""):
     files = os.listdir("test")
     scores = np.zeros([len(files)+5, 3])
     i = 0
     for file in files:
         if not file.startswith('.'):# and os.path.isfile(os.path.join(root, file)):
-            scores[i] = benchmark(iio.imread("test/" + file), iio.imread("val/" + file), getDelta)
+            scores[i] = benchmark(iio.imread(filepath + "test/" + file), iio.imread(filepath + "val/" + file), getDelta)
             i+=1
     scores = scores[~(scores == 0).all(axis=1)]
     return scores
