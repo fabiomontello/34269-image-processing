@@ -142,10 +142,12 @@ def benchmark(image, imageTrue, wantDeltaE=True):
     mrae_total = (mrae_R + mrae_G + mrae_B) / 3
     
     if wantDeltaE == True:
-        delta_E_pixels = np.zeros([image.shape[0], image.shape[1]])
-        for i in range(image.shape[0]):
-            for j in range(image.shape[1]):
-                delta_E_pixels[i,j] = colour.delta_E(image[i,j,:], imageTrue[i,j,:], method="CIE 2000")
+        imageLAB = color.rgb2lab(image)
+        imageTrueLAB = color.rgb2lab(imageTrue)
+        delta_E_pixels = np.zeros([imageLAB.shape[0], imageLAB.shape[1]])
+        for i in range(imageLAB.shape[0]):
+            for j in range(imageLAB.shape[1]):
+                delta_E_pixels[i,j] = colour.delta_E(imageLAB[i,j,:], imageTrueLAB[i,j,:], method="CIE 2000")
         delta_E = np.mean(delta_E_pixels)
     else:
         delta_E = None
@@ -158,6 +160,7 @@ def getScores(getDelta=True, filepath=""):
     for file in files:
         if not file.startswith('.'):# and os.path.isfile(os.path.join(root, file)):
             scores[i] = benchmark(iio.imread(filepath + "test/" + file), iio.imread(filepath + "val/" + file), getDelta)
+            print(i, file, scores[i])
             i+=1
     scores = scores[~(scores == 0).all(axis=1)]
     return scores
