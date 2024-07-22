@@ -102,14 +102,13 @@ transCb = dictCb#.fit(patchCb2D).transform(patchCb2D)
 # function to colorize greyscale image using YCbCr
 def colorizeImg(greyImg, dictCb, dictCr,patchSze,mxPatches,numComp):
     # get patches
-    patchesCb=patchesCb/255
-    patchesCr=patchesCr/255
+    greyImg=greyImg/255
     patchesCb = imgPatch([greyImg], patchSze, mxPatches)
-    patchesCr = imgPatch([greyImg], patchSze, mxPatches)
+    patchesCr = patchesCb #imgPatch([greyImg], patchSze, mxPatches)
 
     # reshape to match dictionary
     reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)
-    reshapedCr = patchesCr.reshape(patchesCr.shape[0], -1)
+    reshapedCr = reshapedCb #patchesCr.reshape(patchesCr.shape[0], -1)
     #transCb=reshapedCb
     #transCr=reshapedCr
 
