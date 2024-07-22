@@ -75,7 +75,7 @@ print(patchCb2D.shape)
 #print(patchCb2D)
 # number of dict atoms
 numComp = 625#sze[0]*sze[1]#100
-sparseTarget=numComp
+sparseTarget=16#numComp
 # init DictionaryLearning models
 dictY=dictLearn(patchY2D,numComp,sparseTarget)
 #dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
