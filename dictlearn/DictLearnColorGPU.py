@@ -33,7 +33,7 @@ def load_images_from_folder(folder):
             images.append(img)
     return images
 
-imgDir = '../data/imagenet-val/imagenet-val/*.jpeg'
+imgDir = '../data/imagenet-val/imagenet-val/val/*.jpeg'
 files=[]
 [files.extend(glob.glob(imgDir))]
 
