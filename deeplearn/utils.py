@@ -16,6 +16,12 @@ from skimage.color import (
     yuv2rgb,
 )
 from torch.autograd import Variable
+import colour
+import numpy as np
+import os
+import imageio.v3 as iio
+from sklearn.metrics import root_mean_squared_error
+from sktime.performance_metrics.forecasting import mean_relative_absolute_error
 
 
 class FeatureExtractor(nn.Module):
@@ -119,3 +125,39 @@ def convert(input_, type_):
         "rgb2ycbcr": rgb_to_ycbcr(input_),
         "ycbcr2rgb": ycbcr_to_rgb(input_),
     }.get(type_, err(type_))
+
+def benchmark(image, imageTrue, wantDeltaE=True):
+    R1, G1, B1 = image[:, :, 0], image[:, :, 1], image[:, :, 2]
+    R2, G2, B2 = imageTrue[:, :, 0], imageTrue[:, :, 1], imageTrue[:, :, 2]
+    
+    rmse_R = root_mean_squared_error(R1, R2)
+    rmse_G = root_mean_squared_error(G1, G2)
+    rmse_B = root_mean_squared_error(B1, B2)
+    rmse_total = (rmse_R + rmse_G + rmse_B) / 3
+    
+    #Need a benchmark image for MRAE, using the ground image as benchmark leads to essentially dividing by 0
+    mrae_R = mean_relative_absolute_error(R2, R1, y_pred_benchmark=R2) 
+    mrae_G = mean_relative_absolute_error(G2, G1, y_pred_benchmark=G2)
+    mrae_B = mean_relative_absolute_error(B2, B1, y_pred_benchmark=B2)
+    mrae_total = (mrae_R + mrae_G + mrae_B) / 3
+    
+    if wantDeltaE == True:
+        delta_E_pixels = np.zeros([image.shape[0], image.shape[1]])
+        for i in range(image.shape[0]):
+            for j in range(image.shape[1]):
+                delta_E_pixels[i,j] = colour.delta_E(image[i,j,:], imageTrue[i,j,:], method="CIE 2000")
+        delta_E = np.mean(delta_E_pixels)
+    else:
+        delta_E = None
+    return rmse_total, mrae_total, delta_E
+
+def getScores(getDelta=True):
+    files = os.listdir("test")
+    scores = np.zeros([len(files)+5, 3])
+    i = 0
+    for file in files:
+        if not file.startswith('.'):# and os.path.isfile(os.path.join(root, file)):
+            scores[i] = benchmark(iio.imread("test/" + file), iio.imread("val/" + file), getDelta)
+            i+=1
+    scores = scores[~(scores == 0).all(axis=1)]
+    return scores
