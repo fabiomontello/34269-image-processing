@@ -193,16 +193,16 @@ def test(x):
 
                 # plot images
         fig, axes = plt.subplots(1,3,figsize=(15,5))
-        axes[0].imshow(imgRGB,cmap = 'Reds')
-        axes[0].set_title('Original Image')
+        axes[0].imshow(imgRGB[:, :, 0],cmap = 'Reds', vmin=0, vmax=255)
+        axes[0].set_title('R')
         axes[0].axis('off')
         
-        axes[1].imshow(imgRGB,cmap = 'Greens')
-        axes[1].set_title('Greyscale Image')
+        axes[1].imshow(imgRGB[:, :, 1],cmap = 'Greens', vmin=0, vmax=255)
+        axes[1].set_title('G')
         axes[1].axis('off')
         
-        axes[2].imshow(imgRGB,cmap = 'Blues')
-        axes[2].set_title('Recolorized Image')
+        axes[2].imshow(imgRGB[:, :, 2],cmap = 'Blues', vmin=0, vmax=255)
+        axes[2].set_title('B')
         axes[2].axis('off')
         plt.savefig('./rgb'+str(i)+'.png')
 
