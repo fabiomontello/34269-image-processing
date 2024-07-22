@@ -152,8 +152,8 @@ def benchmark(image, imageTrue, wantDeltaE=True):
     return rmse_total, mrae_total, delta_E
 
 def getScores(getDelta=True, filepath=""):
-    files = os.listdir("test")
-    scores = np.zeros([len(files)+5, 3])
+    files = os.listdir(filepath + "test")
+    scores = np.zeros([len(files), 3])
     i = 0
     for file in files:
         if not file.startswith('.'):# and os.path.isfile(os.path.join(root, file)):
