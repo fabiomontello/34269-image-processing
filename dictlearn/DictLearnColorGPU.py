@@ -37,7 +37,7 @@ def dictLearn(signals,atoms,sparse):
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 30
+N = 10
 trainSub = trainImg[:N]
 
 # convert to YCrCb
@@ -78,14 +78,14 @@ print(patchCb2D.shape)
 #print(patchCb2D)
 # number of dict atoms
 numComp = sze[0]*sze[1]#100
-
+sparseTarget=64
 # init DictionaryLearning models
-dictY=dictLearn(patchY2D,numComp,16)
+dictY=dictLearn(patchY2D,numComp,sparseTarget)
 #dictCr = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
-dictCr=dictLearn(patchCr2D,numComp,16)
+dictCr=dictLearn(patchCr2D,numComp,sparseTarget)
 
 #dictCb = DictionaryLearning(n_components=numComp, transform_algorithm='lasso_lars', transform_alpha=1.0, n_jobs=numCores)
-dictCb=dictLearn(patchCb2D,numComp,16)
+dictCb=dictLearn(patchCb2D,numComp,sparseTarget)
 
 
 # In[ ]:
