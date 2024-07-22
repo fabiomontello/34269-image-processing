@@ -36,7 +36,7 @@ def dictLearn(signals,atoms,sparse):
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 10
+N = 15
 trainSub = trainImg[:N]
 
 # convert to YCrCb
@@ -205,4 +205,4 @@ def test(x):
 
 
 test(1)
-print('done in %.2f minutes' % str((time() - t0)/60.0))
+print('done in %.2f minutes' % ((time() - t0)/60.0))
