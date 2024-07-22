@@ -137,8 +137,8 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches,numComp):
     print(transCb.shape)
     # reconstruct patches
     recPatchY = transY@dictY#np.dot(transY, dictY)
-    recPatchCb = transCb@dictCb#np.dot(transCb, dictCb)
-    recPatchCr = transCr@dictCr#np.dot(transCr, dictCr)
+    recPatchCb = transY@dictCb#np.dot(transCb, dictCb)
+    recPatchCr = transY@dictCr#np.dot(transCr, dictCr)
     print('recPatchCb')
     print(recPatchCb.shape)
 
