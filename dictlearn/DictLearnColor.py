@@ -12,12 +12,15 @@ from joblib import Parallel, delayed
 import matplotlib.pyplot as plt
 from tensorflow.keras.datasets import cifar10
 import multiprocessing
+from time import time
+
+t0=time()
 
 # load CIFAR-10 dataset
 (trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
-N = 500
+N = 10
 trainSub = trainImg[:N]
 
 # convert to YCrCb
@@ -161,7 +164,8 @@ def test(x):
 # In[12]:
 
 
-test(20)
+test(3)
+print('done in %.2f minutes' % ((time() - t0)/60.0))
 
 
 # Num Images = 100<br>
