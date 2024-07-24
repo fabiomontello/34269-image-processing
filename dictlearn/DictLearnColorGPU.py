@@ -55,7 +55,7 @@ def loadDataset(dir):
     return dataset
 
 # location of dataset
-imgDir = '../data/imagenet-val/imagenet-val/val/'
+imgDir = '/zhome/ad/a/211839/34269-image-processing/data/imagenet-val/imagenet-val/val/'
 trainImg=loadDataset(imgDir)
 
 # create and learn dictionary
@@ -164,8 +164,6 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches):
     colorImgRGB = np.rot90(colorImgRGB)
 
     return colorImgRGB
-
-
 
 # perform x number of tests
 def test(x):
