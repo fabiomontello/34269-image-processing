@@ -19,11 +19,11 @@ import glob
 t0=time()
 
 # load CIFAR-10 dataset
-(trainImg, _), (_, _) = cifar10.load_data()
+#(trainImg, _), (_, _) = cifar10.load_data()
 
 # reduce size of dataset
 N = 5000
-trainSub = trainImg[:N]
+#trainSub = trainImg[:N]
 
 def load_images_from_folder(folder):
     images = []
@@ -37,13 +37,13 @@ imgDir = '../data/imagenet-val/imagenet-val/val/*.jpeg'
 files=[]
 [files.extend(glob.glob(imgDir))]
 
-images = [cv2.imread(file) for file in files]
+trainSub = [cv2.imread(file) for file in files]
 
 #creating a collection with the available images
-col = images#load_images_from_folder(imgDir)
+#col = images#load_images_from_folder(imgDir)
 # comment here
 
-trainSub = np.array([cv2.imread('./testImg.JPEG')])#/34269-image-processing/data/imagenet-val/imagenet-val/val/ILSVRC2012_val_00000019.JPEG',cv2.IMREAD_COLOR)])
+#trainSub = np.array([cv2.imread('./testImg.JPEG')])#/34269-image-processing/data/imagenet-val/imagenet-val/val/ILSVRC2012_val_00000019.JPEG',cv2.IMREAD_COLOR)])
 print(trainSub)
 def dictLearn(signals,atoms,sparse):
 
