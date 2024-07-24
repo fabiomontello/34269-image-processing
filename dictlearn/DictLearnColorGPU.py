@@ -39,7 +39,8 @@ def load_images_from_folder(folder):
 
 def centerCrop(img, cropSze=(256, 256)):
     # original size
-    w, h = img.size 
+    w = img.size[0] 
+    h = img.size[1] 
     # new size
     croppedW = cropSze[0] 
     croppedH = cropSze[1]
