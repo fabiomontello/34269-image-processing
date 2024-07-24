@@ -26,6 +26,9 @@ t0=time()
 N = 5000
 #trainSub = trainImg[:N]
 
+
+
+
 def load_images_from_folder(folder):
     images = []
     for filename in os.listdir(folder):
@@ -34,21 +37,33 @@ def load_images_from_folder(folder):
             images.append(img)
     return images
 
+def centerCrop(img, cropSze=(256, 256)):
+    # original size
+    w, h = img.size 
+    # new size
+    croppedW = cropSze[0] 
+    croppedH = cropSze[1]
+    # find center
+    left = (w - croppedW) // 2
+    top = (h - croppedH) // 2
+    right = (w + croppedW) // 2
+    bottom = (h + croppedH) // 2
+    
+    return img.crop((left, top, right, bottom))
+
 imgDir = '../data/imagenet-val/imagenet-val/val/'
 trainSub=[]
 for img in os.listdir(imgDir):
     img = cv2.imread(os.path.join(imgDir,img))
     if img.all() != None:
-            trainSub.append(img)
+            trainSub.append(centerCrop(img))
 
 #trainSub = [cv2.imread(file) for file in files]
 
 #creating a collection with the available images
 #col = images#load_images_from_folder(imgDir)
-# comment here
-
 #trainSub = np.array([cv2.imread('./testImg.JPEG')])#/34269-image-processing/data/imagenet-val/imagenet-val/val/ILSVRC2012_val_00000019.JPEG',cv2.IMREAD_COLOR)])
-print(trainSub)
+print(trainSub.size)
 def dictLearn(signals,atoms,sparse):
 
     dictionary = dct_dict_1d(
