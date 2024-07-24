@@ -67,7 +67,7 @@ class TransformsFinetune:
                     min_height=256,
                     min_width=256,
                     border_mode=0,
-                    value=(0, 0, 0),
+                    value=(255, 255, 255),
                 ),
                 (
                     A.CenterCrop(height=image_size, width=image_size)
@@ -85,7 +85,7 @@ class TransformsFinetune:
                     min_height=256,
                     min_width=256,
                     border_mode=0,
-                    value=(0, 0, 0),
+                    value=(255, 255, 255),
                 ),
                 (
                     A.RandomCrop(height=image_size, width=image_size)

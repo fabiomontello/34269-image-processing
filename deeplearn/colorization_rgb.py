@@ -18,7 +18,7 @@ formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
 EPOCHS = 250
 LR = 0.001
-BATCH_SIZE = 512
+BATCH_SIZE = 128
 DATA_PATH = "/home/fabmo/works/34269-image-processing/data/imagenet-val/imagenet-val/"
 RGB_MEAN = torch.Tensor((0.485, 0.456, 0.406)).view(1, 3, 1, 1)
 RGB_STD = torch.Tensor((0.229, 0.224, 0.225)).view(1, 3, 1, 1)
@@ -55,8 +55,8 @@ if __name__ == "__main__":
     )
 
     model = ColorNet(None, out_channels=3, optimize_backbone=False).to(device)
-    for param in model.backbone.parameters():
-        param.requires_grad = False
+    # for param in model.backbone.parameters():
+    #     param.requires_grad = False
 
     optimizer = torch.optim.Adam(
         filter(lambda p: p.requires_grad, model.parameters()),
@@ -94,7 +94,7 @@ if __name__ == "__main__":
             input, label = split_input_label_rgb(data.to(device))
 
             output = model(input)
-            loss = criterion1(output.flatten(1), label.flatten(1)) + 0.5 * criterion2(
+            loss = criterion1(output.flatten(1), label.flatten(1)) + 2 * criterion2(
                 F.softmax(output.flatten(1), dim=1),
                 F.softmax(label.flatten(1), dim=1),
             )
@@ -120,9 +120,8 @@ if __name__ == "__main__":
 
             with torch.no_grad():
                 output = model(input)
-            loss = criterion1(output.flatten(1), label.flatten(1)) + 0.5 * criterion2(
-                F.softmax(output.flatten(1), dim=1),
-                F.softmax(label.flatten(1), dim=1),
+            loss = criterion1(output.flatten(1), label.flatten(1)) + 2 * criterion2(
+                F.softmax(output.flatten(1), dim=1), F.softmax(label.flatten(1), dim=1)
             )
             avg_loss += loss.item()
             if i < 3:
