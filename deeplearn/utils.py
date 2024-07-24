@@ -15,14 +15,11 @@ from skimage.color import (
     ycbcr2rgb,
     yuv2rgb,
 )
-from torch.autograd import Variable
 
 
 class FeatureExtractor(nn.Module):
     def __init__(self, model):
         super(FeatureExtractor, self).__init__()
-        # Assuming the model is a nn.Sequential, remove the last layer (head)
-        # This is a generic approach; the actual implementation may vary based on the model architecture
         self.features = nn.Sequential(*list(model.children()))
 
     def forward(self, x):
@@ -30,7 +27,9 @@ class FeatureExtractor(nn.Module):
         return x
 
 
+############################################################################################
 #### The following code for color conversion of pythorch images has been taken from https://github.com/jorge-pessoa/pytorch-colors/blob/master/tests/unit_tests.py
+############################################################################################
 
 
 def _convert(input_, type_):
@@ -119,3 +118,8 @@ def convert(input_, type_):
         "rgb2ycbcr": rgb_to_ycbcr(input_),
         "ycbcr2rgb": ycbcr_to_rgb(input_),
     }.get(type_, err(type_))
+
+
+############################################################################################
+##################################### END ##################################################
+############################################################################################

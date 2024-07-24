@@ -3,6 +3,7 @@ import datetime
 import cv2
 import numpy as np
 import torch
+import torch.nn.functional as F
 from imagenet1k import load_imagenet_1k
 from model import ColorNet
 from torch import nn
@@ -18,7 +19,7 @@ formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
 EPOCHS = 250
 LR = 0.001
-BATCH_SIZE = 512
+BATCH_SIZE = 256
 DATA_PATH = "/home/fabmo/works/34269-image-processing/data/imagenet-val/imagenet-val/"
 YCBCR_MEAN = torch.Tensor((22115.68229816, -1714.12480085, 1207.379430890)).view(
     1, 3, 1, 1
@@ -27,7 +28,7 @@ YCBCR_STD = torch.Tensor((56166673.0373194, 2917696.06388108, 2681980.63707231))
     1, 3, 1, 1
 )
 PRINT_EVERY = 10
-BACKBONE_WEIGHTS = "weights/ycbcr_backbone.pth"
+BACKBONE_WEIGHTS = "weights/ycbcr_backbone_norm.pth"
 writer = SummaryWriter(f"logs/{formatted_time}")
 
 
@@ -36,7 +37,7 @@ def split_input_label(data):
     ycbcr = rgb_to_ycbcr(data)
     input = torch.clone(ycbcr)
     input[:, 1:, :, :] = 0
-    # input = (input - YCBCR_MEAN * 255) / (YCBCR_STD * 255)
+    input = (input - YCBCR_MEAN) / (YCBCR_STD)
     label = ycbcr[:, 1:, :, :]
     return input, label
 
@@ -67,7 +68,9 @@ if __name__ == "__main__":
         lr=LR,
     )
     scheduler = ReduceLROnPlateau(optimizer, "min")
-    criterion = nn.L1Loss()
+    criterion1 = nn.L1Loss()
+    criterion2 = nn.KLDivLoss(reduction="mean")
+
     best_loss = 1000
     patience = 0
 
@@ -81,7 +84,10 @@ if __name__ == "__main__":
             input, label = input.to(device), label.to(device)
 
             output = model(input)
-            loss = criterion(output, label)
+            loss = criterion1(output.flatten(1), label.flatten(1)) + 2 * criterion2(
+                F.softmax(output.flatten(1), dim=1),
+                F.softmax(label.flatten(1), dim=1),
+            )
 
             optimizer.zero_grad()
             loss.backward()
@@ -105,7 +111,10 @@ if __name__ == "__main__":
             # label = label.to(device)
             with torch.no_grad():
                 output = model(input)
-            loss = criterion(output.cpu(), label)
+            loss = criterion1(output.flatten(1), label.flatten(1)) + 2 * criterion2(
+                F.softmax(output.flatten(1), dim=1),
+                F.softmax(label.flatten(1), dim=1),
+            )
             avg_loss += loss.item()
             if i < 3:
 

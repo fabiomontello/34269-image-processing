@@ -167,3 +167,5 @@ logs
 weights
 *.sh
 notebook
+output
+*.zip
