@@ -52,7 +52,7 @@ def loadDataset(dir):
     dataset=[]
     for file in os.listdir(dir):
         img = cv2.imread(os.path.join(dir,file), cv2.IMREAD_COLOR)
-        print(img.shape)
+        #print(img.shape)
         if img.all() != None:
                 dataset.append(centerCrop(img))
     return dataset
@@ -65,9 +65,8 @@ trainSub=loadDataset(imgDir)
 #creating a collection with the available images
 #col = images#load_images_from_folder(imgDir)
 #trainSub = np.array([cv2.imread('./testImg.JPEG')])#/34269-image-processing/data/imagenet-val/imagenet-val/val/ILSVRC2012_val_00000019.JPEG',cv2.IMREAD_COLOR)])
-print(trainSub.size)
+print(trainSub.shape)
 def dictLearn(signals,atoms,sparse):
-
     dictionary = dct_dict_1d(
         n_atoms=atoms,
         size=signals.shape[0],
