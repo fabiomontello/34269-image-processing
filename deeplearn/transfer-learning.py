@@ -24,6 +24,9 @@ BATCH_SIZE = 172
 DATA_PATH = "/home/fabmo/works/34269-image-processing/data/imagenet-val/imagenet-val/"
 RGB_MEAN = torch.Tensor((0.485, 0.456, 0.406)).view(1, 3, 1, 1)
 RGB_STD = torch.Tensor((0.229, 0.224, 0.225)).view(1, 3, 1, 1)
+YCRCB_MEAN = torch.Tensor((0.5, 0.5, 0.5)).view(1, 3, 1, 1)
+YCRCB_STD = torch.Tensor((0.5, 0.5, 0.5)).view(1, 3, 1, 1)
+
 PRINT_EVERY = 10
 writer = SummaryWriter(f"logs/{formatted_time}")
 
@@ -32,6 +35,8 @@ if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
     RGB_MEAN = RGB_MEAN.to(device)
     RGB_STD = RGB_STD.to(device)
+    YCRCB_MEAN = YCRCB_MEAN.to(device)
+    YCRCB_STD = YCRCB_STD.to(device)
 
     train_transform = TransformsPretrain(train=True, image_size=224)
     test_transform = TransformsPretrain(train=False, image_size=224)
@@ -57,10 +62,6 @@ if __name__ == "__main__":
         num_classes=0,  # remove classifier nn.Linear
     ).to(device)
     student = FeatureExtractor(student).to(device)
-
-    # get model specific transforms (normalization, resize)
-    # data_config = timm.data.resolve_model_data_config(teacher)
-    # transforms = timm.data.create_transform(**data_config, is_training=False)
 
     optimizer = torch.optim.Adam(student.parameters(), lr=LR)
     scheduler = SequentialLR(
@@ -99,6 +100,7 @@ if __name__ == "__main__":
                 teacher_output = teacher(teacher_data)
 
             student_data = rgb_to_ycbcr(teacher_data)
+            student_data = (student_data - YCRCB_MEAN) / YCRCB_STD
             student_output = student(student_data)
             loss = criterion(student_output, teacher_output)
 
@@ -122,6 +124,7 @@ if __name__ == "__main__":
             teacher_data = data.to(device)
             teacher_data = (teacher_data - (RGB_MEAN * 255)) / (RGB_STD * 255)
             student_data = rgb_to_ycbcr(teacher_data)
+            student_data = (student_data - YCRCB_MEAN) / YCRCB_STD
             with torch.no_grad():
                 teacher_output = teacher(teacher_data)
                 student_output = student(student_data)

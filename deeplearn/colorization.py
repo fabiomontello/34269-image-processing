@@ -10,35 +10,41 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from transforms import TransformsFinetune
-from utils import rgb_to_ycbcr
+from utils import rgb_to_ycbcr, ycbcr_to_rgb
 
 # Get the current date and time
 current_time = datetime.datetime.now()
 formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
-EPOCHS = 50
-LR = 0.0001
-BATCH_SIZE = 172
+EPOCHS = 250
+LR = 0.001
+BATCH_SIZE = 512
 DATA_PATH = "/home/fabmo/works/34269-image-processing/data/imagenet-val/imagenet-val/"
-RGB_MEAN = torch.Tensor((0.485, 0.456, 0.406)).view(1, 3, 1, 1)
-RGB_STD = torch.Tensor((0.229, 0.224, 0.225)).view(1, 3, 1, 1)
+YCBCR_MEAN = torch.Tensor((22115.68229816, -1714.12480085, 1207.379430890)).view(
+    1, 3, 1, 1
+)
+YCBCR_STD = torch.Tensor((56166673.0373194, 2917696.06388108, 2681980.63707231)).view(
+    1, 3, 1, 1
+)
 PRINT_EVERY = 10
-BACKBONE_WEIGHTS = "weights/ycrcb_backbone.pth"
+BACKBONE_WEIGHTS = "weights/ycbcr_backbone.pth"
 writer = SummaryWriter(f"logs/{formatted_time}")
 
 
 def split_input_label(data):
+
     ycbcr = rgb_to_ycbcr(data)
     input = torch.clone(ycbcr)
     input[:, 1:, :, :] = 0
+    # input = (input - YCBCR_MEAN * 255) / (YCBCR_STD * 255)
     label = ycbcr[:, 1:, :, :]
     return input, label
 
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    RGB_MEAN = RGB_MEAN.to(device)
-    RGB_STD = RGB_STD.to(device)
+    YCBCR_MEAN = YCBCR_MEAN.to(device)
+    YCBCR_STD = YCBCR_STD.to(device)
 
     train_transform = TransformsFinetune(train=True, image_size=224)
     test_transform = TransformsFinetune(train=False, image_size=224)
@@ -52,9 +58,14 @@ if __name__ == "__main__":
         num_workers=4,
     )
 
-    model = ColorNet(BACKBONE_WEIGHTS).to(device)
+    model = ColorNet(BACKBONE_WEIGHTS, rgb=False).to(device)
+    for param in model.backbone.parameters():
+        param.requires_grad = False
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+    optimizer = torch.optim.Adam(
+        filter(lambda p: p.requires_grad, model.parameters()),
+        lr=LR,
+    )
     scheduler = ReduceLROnPlateau(optimizer, "min")
     criterion = nn.L1Loss()
     best_loss = 1000
@@ -67,11 +78,10 @@ if __name__ == "__main__":
         progress_bar = tqdm(total=steps, desc="Training", position=0)
         for i, data in enumerate(train_loader, 0):
             input, label = split_input_label(data)
-            input = input.to(device)
-            # label = label.to(device)
+            input, label = input.to(device), label.to(device)
 
             output = model(input)
-            loss = criterion(output.cpu(), label)
+            loss = criterion(output, label)
 
             optimizer.zero_grad()
             loss.backward()
@@ -98,24 +108,35 @@ if __name__ == "__main__":
             loss = criterion(output.cpu(), label)
             avg_loss += loss.item()
             if i < 3:
+
                 # YCbCr -> RGB
-                input = input[0].cpu()
-                output = output[0].cpu()
-                label = label[0].cpu()
+                input = input[0].unsqueeze(0).cpu()
+                output = output[0].unsqueeze(0).cpu()
+                label = label[0].unsqueeze(0).cpu()
 
-                gt = input.numpy()
-                gt[1:, :, :] += label.numpy()
-                gt = np.transpose(gt, (1, 2, 0))
-                gt = cv2.cvtColor(gt, cv2.COLOR_BGR2YCR_CB)
+                gt = input.clone()
+                gt[:, 1:, :, :] += label
+                gt = (ycbcr_to_rgb(gt).squeeze(0).cpu().numpy() * 255).astype(np.uint8)
 
-                out = input.numpy()
-                out[1:, :, :] += output.numpy()
-                out = np.transpose(out, (1, 2, 0))
-                out = cv2.cvtColor(out, cv2.COLOR_BGR2YCR_CB)
+                out = input.clone()
+                out[:, 1:, :, :] += output
+                out = (ycbcr_to_rgb(out).squeeze(0).cpu().numpy() * 255).astype(
+                    np.uint8
+                )
 
+                prt = np.concatenate(
+                    (
+                        gt,
+                        np.concatenate(
+                            (gt[:1, :, :], gt[:1, :, :], gt[:1, :, :]), axis=0
+                        ),
+                        out,
+                    ),
+                    axis=2,
+                )
                 writer.add_image(
                     f"Validation/{i}",
-                    torch.from_numpy(gt).permute(2, 0, 1),
+                    torch.from_numpy(prt),
                     epoch,
                 )
         avg_loss /= len(val_loader)

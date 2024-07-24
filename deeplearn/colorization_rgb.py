@@ -2,6 +2,7 @@ import datetime
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 import torchvision.transforms as transforms
 from imagenet1k import load_imagenet_1k
 from model import ColorNet
@@ -15,7 +16,7 @@ from transforms import TransformsFinetune
 current_time = datetime.datetime.now()
 formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
-EPOCHS = 150
+EPOCHS = 250
 LR = 0.001
 BATCH_SIZE = 512
 DATA_PATH = "/home/fabmo/works/34269-image-processing/data/imagenet-val/imagenet-val/"
@@ -24,10 +25,10 @@ RGB_STD = torch.Tensor((0.229, 0.224, 0.225)).view(1, 3, 1, 1)
 PRINT_EVERY = 10
 BACKBONE_WEIGHTS = "weights/ycrcb_backbone.pth"
 writer = SummaryWriter(f"logs/{formatted_time}")
+grayscale_transform = transforms.Grayscale(num_output_channels=3)
 
 
 def split_input_label_rgb(data):
-    grayscale_transform = transforms.Grayscale(num_output_channels=3)
     input = grayscale_transform(data)
     input = (input - RGB_MEAN * 255) / (RGB_STD * 255)
 
@@ -78,7 +79,9 @@ if __name__ == "__main__":
         ],
         milestones=[int(0.05 * EPOCHS)],
     )
-    criterion = nn.L1Loss()
+    criterion1 = nn.L1Loss()
+    criterion2 = nn.KLDivLoss(reduction="mean")
+
     best_loss = 1e6
     patience = 0
 
@@ -91,7 +94,10 @@ if __name__ == "__main__":
             input, label = split_input_label_rgb(data.to(device))
 
             output = model(input)
-            loss = criterion(output.flatten(1), label.flatten(1))
+            loss = criterion1(output.flatten(1), label.flatten(1)) + 0.5 * criterion2(
+                F.softmax(output.flatten(1), dim=1),
+                F.softmax(label.flatten(1), dim=1),
+            )
 
             optimizer.zero_grad()
             loss.backward()
@@ -114,7 +120,10 @@ if __name__ == "__main__":
 
             with torch.no_grad():
                 output = model(input)
-            loss = criterion(output, label)
+            loss = criterion1(output.flatten(1), label.flatten(1)) + 0.5 * criterion2(
+                F.softmax(output.flatten(1), dim=1),
+                F.softmax(label.flatten(1), dim=1),
+            )
             avg_loss += loss.item()
             if i < 3:
                 input = (
@@ -136,7 +145,7 @@ if __name__ == "__main__":
                 )
         avg_loss /= len(val_loader)
         print(f"Epoch: {epoch}, Loss: {avg_loss}")
-        scheduler.step(avg_loss)
+        scheduler.step()
 
         writer.add_scalar("Loss/val", avg_loss, epoch)
         patience += 1

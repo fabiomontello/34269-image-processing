@@ -52,7 +52,9 @@ class Decoder(nn.Module):
 
 
 class ColorNet(nn.Module):
-    def __init__(self, backbone_path=None, out_channels=2, optimize_backbone=False):
+    def __init__(
+        self, backbone_path=None, out_channels=2, optimize_backbone=False, rgb=True
+    ):
         super(ColorNet, self).__init__()
         self.emb_dim = 768
         self.depth = 1
@@ -61,6 +63,7 @@ class ColorNet(nn.Module):
         self.out_channels = out_channels
         self.base_weights = True if backbone_path is None else False
         self.optimize_backbone = optimize_backbone
+        self.rgb = rgb
 
         backbone = timm.create_model(
             "vit_base_patch16_224.mae",
@@ -84,8 +87,8 @@ class ColorNet(nn.Module):
 
     def unpatchify(self, x):
         """
-        x: (N, L, patch_size**2 *3)
-        imgs: (N, 3, H, W)
+        x: (N, L, patch_size**2 *1)
+        imgs: (N, 1, H, W)
         """
         p = self.patch_size
         h = w = int(x.shape[1] ** 0.5)
@@ -98,12 +101,20 @@ class ColorNet(nn.Module):
 
     def forward(self, x):
         y = self.backbone(x)
-        r = self.decoder_r(y)
-        g = self.decoder_g(y)
-        b = self.decoder_b(y)
-        r = self.unpatchify(r)
-        g = self.unpatchify(g)
-        b = self.unpatchify(b)
+        if self.rgb:
+            r = self.decoder_r(y)
+            g = self.decoder_g(y)
+            b = self.decoder_b(y)
+            r = self.unpatchify(r)
+            g = self.unpatchify(g)
+            b = self.unpatchify(b)
 
-        y = torch.cat((r, g, b), dim=1)
+            y = torch.cat((r, g, b), dim=1)
+        else:
+            cb = self.decoder_r(y)
+            cr = self.decoder_g(y)
+            cb = self.unpatchify(cb)
+            cr = self.unpatchify(cr)
+
+            y = torch.cat((cb, cr), dim=1)
         return y
