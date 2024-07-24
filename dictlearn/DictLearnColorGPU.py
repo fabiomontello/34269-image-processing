@@ -13,6 +13,7 @@ from dictlearn_gpu.utils import dct_dict_1d
 from time import time
 from sklearn.preprocessing import normalize
 from sklearn.decomposition import sparse_encode
+from PIL import Image 
 import glob
 import os
 
@@ -43,7 +44,9 @@ def centerCrop(img, cropSze=(256, 256)):
     right = (w + croppedW) // 2
     bottom = (h + croppedH) // 2
     
-    return img.crop((left, top, right, bottom))
+    pilImg=Image.fromarray(img)
+    cropped=pilImg.crop((left, top, right, bottom))
+    return np.asarray(cropped)
 
 def loadDataset(dir):
     dataset=[]
