@@ -38,7 +38,7 @@ imgDir = '../data/imagenet-val/imagenet-val/val/'
 trainSub=[]
 for img in os.listdir(imgDir):
     img = cv2.imread(os.path.join(imgDir,img))
-    if img != None:
+    if img.all() != None:
             trainSub.append(img)
 
 #trainSub = [cv2.imread(file) for file in files]
