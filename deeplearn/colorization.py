@@ -28,7 +28,7 @@ YCBCR_STD = torch.Tensor((56166673.0373194, 2917696.06388108, 2681980.63707231))
     1, 3, 1, 1
 )
 PRINT_EVERY = 10
-BACKBONE_WEIGHTS = "weights/ycbcr_backbone_unnorm.pth"
+BACKBONE_WEIGHTS = "weights/ycbcr_backbone_norm.pth"
 writer = SummaryWriter(f"logs/{formatted_time}")
 
 
@@ -37,7 +37,7 @@ def split_input_label(data):
     ycbcr = rgb_to_ycbcr(data)
     input = torch.clone(ycbcr)
     input[:, 1:, :, :] = 0
-    # input = (input - YCBCR_MEAN * 255) / (YCBCR_STD * 255)
+    input = (input - YCBCR_MEAN) / (YCBCR_STD)
     label = ycbcr[:, 1:, :, :]
     return input, label
 

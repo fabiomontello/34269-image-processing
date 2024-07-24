@@ -1,9 +1,8 @@
 import timm
 import torch
 import torch.nn as nn
-from timm.models.vision_transformer import Block, PatchEmbed
+from timm.models.vision_transformer import Block
 from utils import FeatureExtractor
-from vit_pytorch.vit import Attention, FeedForward
 
 
 class Decoder(nn.Module):
