@@ -14,6 +14,7 @@ from time import time
 from sklearn.preprocessing import normalize
 from sklearn.decomposition import sparse_encode
 import glob
+import os
 
 
 t0=time()
@@ -33,11 +34,14 @@ def load_images_from_folder(folder):
             images.append(img)
     return images
 
-imgDir = '../data/imagenet-val/imagenet-val/val/*.jpeg'
-files=[]
-[files.extend(glob.glob(imgDir))]
+imgDir = '../data/imagenet-val/imagenet-val/val/'
+trainSub=[]
+for img in os.listdir(imgDir):
+    img = cv2.imread(os.path.join(imgDir,img))
+    if img != None:
+            trainSub.append(img)
 
-trainSub = [cv2.imread(file) for file in files]
+#trainSub = [cv2.imread(file) for file in files]
 
 #creating a collection with the available images
 #col = images#load_images_from_folder(imgDir)
