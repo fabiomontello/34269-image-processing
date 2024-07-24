@@ -28,17 +28,9 @@ N = 5000
 
 
 
-
-def load_images_from_folder(folder):
-    images = []
-    for filename in os.listdir(folder):
-        img = cv2.imread(os.path.join(folder,filename),cv2.IMREAD_COLOR)
-        if img is not None:
-            images.append(img)
-    return images
-
 def centerCrop(img, cropSze=(256, 256)):
     # original size
+    print(img.size)
     w = img.size[0] 
     h = img.size[1] 
     # new size
@@ -52,12 +44,16 @@ def centerCrop(img, cropSze=(256, 256)):
     
     return img.crop((left, top, right, bottom))
 
+def loadDataset(dir):
+    dataset=[]
+    for img in os.listdir(dir):
+        img = cv2.imread(os.path.join(dir,img))
+        if img.all() != None:
+                dataset.append(centerCrop(img))
+    return dataset
+
 imgDir = '../data/imagenet-val/imagenet-val/val/'
-trainSub=[]
-for img in os.listdir(imgDir):
-    img = cv2.imread(os.path.join(imgDir,img))
-    if img.all() != None:
-            trainSub.append(centerCrop(img))
+trainSub=loadDataset(imgDir)
 
 #trainSub = [cv2.imread(file) for file in files]
 
