@@ -30,6 +30,7 @@ N = 5000
 
 def centerCrop(img, cropSze=(256, 256)):
     # original size
+    print(img)
     print(img.size)
     w = img.size[0] 
     h = img.size[1] 
