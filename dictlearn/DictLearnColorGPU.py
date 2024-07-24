@@ -47,8 +47,8 @@ def centerCrop(img, cropSze=(256, 256)):
 
 def loadDataset(dir):
     dataset=[]
-    for img in os.listdir(dir):
-        img = cv2.imread(os.path.join(dir,img))
+    for file in os.listdir(dir):
+        img = cv2.imread(os.path.join(dir,file))
         if img.all() != None:
                 dataset.append(centerCrop(img))
     return dataset
