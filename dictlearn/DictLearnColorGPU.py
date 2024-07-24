@@ -172,7 +172,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches):
 def test(x):
     for i in range(x):
         # test image
-        N = 100
+        N = 1
         imgRGB = trainImg[N+i]
         # convert to greyscale
         greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_RGB2GRAY)
@@ -213,5 +213,5 @@ def test(x):
         axes[2].axis('off')
         plt.savefig('./rgb'+str(i)+'.png')
 
-test(3)
+test(5)
 print('done in %.2f minutes' % ((time() - t0)/60.0))
