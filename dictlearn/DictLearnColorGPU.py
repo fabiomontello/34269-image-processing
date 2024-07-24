@@ -30,7 +30,7 @@ N = 5000
 
 def centerCrop(img, cropSze=(256, 256)):
     # original size
-    print(img)
+    #print(img)
     print(img.size)
     w = img.size[0] 
     h = img.size[1] 
@@ -49,6 +49,7 @@ def loadDataset(dir):
     dataset=[]
     for file in os.listdir(dir):
         img = cv2.imread(os.path.join(dir,file))
+        print(img.size)
         if img.all() != None:
                 dataset.append(centerCrop(img))
     return dataset
