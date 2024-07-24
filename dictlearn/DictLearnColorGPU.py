@@ -74,8 +74,9 @@ def convert_to_ycrcb(img):
     return cv2.cvtColor(img, cv2.COLOR_RGB2YCrCb)
 
 # use more CPU cores for faster training
-numCores = multiprocessing.cpu_count()
-trainImgYCrCb = Parallel(n_jobs=numCores)(delayed(convert_to_ycrcb)(img) for img in trainImg)
+trainImgYCrCb = [convert_to_ycrcb(img) for img in trainImg]
+#numCores = multiprocessing.cpu_count()
+#trainImgYCrCb = Parallel(n_jobs=numCores)(delayed(convert_to_ycrcb)(img) for img in trainImg)
 
 # separate channels and normalize values
 trainY = np.array([img[:, :, 0] for img in trainImgYCrCb])/255 # Y channel
@@ -86,7 +87,9 @@ trainCb = np.array([img[:, :, 2] for img in trainImgYCrCb])/255 # Cb channel
 def imgPatch(imgs, szePatch, maxPatch):
     def extract(img):
         return extract_patches_2d(img, szePatch, max_patches=maxPatch)
-    patches = Parallel(n_jobs=numCores)(delayed(extract)(img) for img in imgs)
+    #patches = Parallel(n_jobs=numCores)(delayed(extract)(img) for img in imgs)
+    patches = [extract(img) for img in trainImg]
+
     return np.concatenate(patches, axis=0)
 
 # size of patches
