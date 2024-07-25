@@ -176,7 +176,7 @@ def test(x):
         N = 1
         imgRGB = trainImg[N+i]
         # convert to greyscale
-        greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_RGB2GRAY)
+        greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
         # colorize using dictionary learning
         colorizedImg = colorizeImg(greyImg, transY, transCb, transCr, sze, 10000000)
         
