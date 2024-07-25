@@ -9,12 +9,12 @@ from tqdm import tqdm
 from transforms import TransformsFinetune
 
 BATCH_SIZE = 128
-DATA_PATH = "/home/fabmo/works/34269-image-processing/data/imagenet-val/imagenet-val/"
+DATA_PATH = "/home/fabmo/works/34269-image-processing/data/flowers/split/"
 RGB_MEAN = torch.Tensor((0.485, 0.456, 0.406)).view(1, 3, 1, 1)
 RGB_STD = torch.Tensor((0.229, 0.224, 0.225)).view(1, 3, 1, 1)
 PRINT_EVERY = 10
-MODEL_WEIGHTS = "weights/RGB_best_two.pth"
-OUT_DIR = "output/rgb_two/"
+MODEL_WEIGHTS = "weights/rgb_flowers.pth"
+OUT_DIR = "output/rgb_flowers/"
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"

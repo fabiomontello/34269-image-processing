@@ -1,4 +1,5 @@
 from glob import glob
+from itertools import chain
 from random import shuffle
 from urllib.request import urlopen
 
@@ -13,7 +14,11 @@ from torchvision import datasets
 class SortedListDataset(torch.utils.data.Dataset):
     def __init__(self, root, transform):
         super(SortedListDataset, self).__init__()
-        self.img_list = sorted(glob(root + "/*.JPEG"))
+        # Use multiple glob patterns and chain them together to include .JPEG and .jpg files
+        patterns = ["/*.JPEG", "/*.jpg", "/*.JPG", "/*.jpeg"]
+        self.img_list = list(
+            chain.from_iterable(glob(root + pattern) for pattern in patterns)
+        )
         self.transform = transform
 
     def __len__(self):
@@ -30,7 +35,10 @@ class SortedListDataset(torch.utils.data.Dataset):
 class ShuffledListDataset(torch.utils.data.Dataset):
     def __init__(self, root, transform):
         super(ShuffledListDataset, self).__init__()
-        self.img_list = glob(root + "/*.JPEG")
+        patterns = ["/*.JPEG", "/*.jpg", "/*.JPG", "/*.jpeg"]
+        self.img_list = list(
+            chain.from_iterable(glob(root + pattern) for pattern in patterns)
+        )
         shuffle(self.img_list)
         self.transform = transform
 

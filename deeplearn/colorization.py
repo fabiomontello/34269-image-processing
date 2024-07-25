@@ -35,17 +35,17 @@ writer = SummaryWriter(f"logs/{formatted_time}")
 def split_input_label(data):
 
     ycbcr = rgb_to_ycbcr(data)
+    ycbcr = (ycbcr - YCBCR_MEAN) / (YCBCR_STD)
     input = torch.clone(ycbcr)
     input[:, 1:, :, :] = 0
-    input = (input - YCBCR_MEAN) / (YCBCR_STD)
     label = ycbcr[:, 1:, :, :]
     return input, label
 
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    YCBCR_MEAN = YCBCR_MEAN.to(device)
-    YCBCR_STD = YCBCR_STD.to(device)
+    YCBCR_MEAN = YCBCR_MEAN  # .to(device)
+    YCBCR_STD = YCBCR_STD  # .to(device)
 
     train_transform = TransformsFinetune(train=True, image_size=224)
     test_transform = TransformsFinetune(train=False, image_size=224)
@@ -108,7 +108,7 @@ if __name__ == "__main__":
         for i, data in enumerate(tqdm(val_loader), 0):
             input, label = split_input_label(data)
             input = input.to(device)
-            # label = label.to(device)
+            label = label.to(device)
             with torch.no_grad():
                 output = model(input)
             loss = criterion1(output.flatten(1), label.flatten(1)) + 2 * criterion2(
@@ -125,10 +125,12 @@ if __name__ == "__main__":
 
                 gt = input.clone()
                 gt[:, 1:, :, :] += label
+                gt = gt * YCBCR_STD + YCBCR_MEAN
                 gt = (ycbcr_to_rgb(gt).squeeze(0).cpu().numpy() * 255).astype(np.uint8)
 
                 out = input.clone()
                 out[:, 1:, :, :] += output
+                out = out * YCBCR_STD + YCBCR_MEAN
                 out = (ycbcr_to_rgb(out).squeeze(0).cpu().numpy() * 255).astype(
                     np.uint8
                 )
