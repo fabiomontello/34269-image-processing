@@ -15,6 +15,8 @@ from skimage.color import (
     ycbcr2rgb,
     yuv2rgb,
 )
+from sklearn.metrics import root_mean_squared_error
+from sktime.performance_metrics.forecasting import mean_relative_absolute_error
 
 
 class FeatureExtractor(nn.Module):
