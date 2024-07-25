@@ -13,9 +13,6 @@ import os # for file reading
 # https://github.com/mukheshpugal/dictlearn_gpu 
 from dictlearn_gpu import train_dict 
 from dictlearn_gpu.utils import dct_dict_1d
-# for parallel computations on multiple CPU cores
-import multiprocessing
-from joblib import Parallel, delayed
 
 # start time
 t0=time()
@@ -68,10 +65,6 @@ def dictLearn(signals,atoms,sparse):
     # train the dictionary with signals
     updated_dictionary, errors, iters = train_dict(signals, dictionary, sparsity_target=sparse)
     return updated_dictionary
-
-# use more CPU cores for faster training
-#numCores = multiprocessing.cpu_count()
-#trainImgRGB = Parallel(n_jobs=numCores)(delayed(convert_to_ycrcb)(img) for img in trainImg)
 
 # separate channels and normalize values
 trainR = np.array([img[:, :, 0] for img in trainImg])/255 # R channel
@@ -198,7 +191,7 @@ def test(x):
         axes[2].imshow(colorizedImg, vmin=0, vmax=255)
         axes[2].set_title('Recolorized Image')
         axes[2].axis('off')
-        plt.savefig('./img'+str(i)+'.png')
+        plt.savefig('./imgRGB'+str(i)+'.png')
 
         # plot red channel
         fig, axes = plt.subplots(1,3,figsize=(15,5))
