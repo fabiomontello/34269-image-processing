@@ -105,9 +105,9 @@ dictG=dictLearn(patchG2D,numComp,sparseTarget)
 dictB=dictLearn(patchB2D,numComp,sparseTarget)
 
 # transform patches using dictionaries
-transR = (patchR2D.T@dictR)#.T
-transG = (patchG2D.T@dictG)#.T
-transB = (patchB2D.T@dictB)#.T
+transR = (patchR2D.T@dictR).T
+transG = (patchG2D.T@dictG).T
+transB = (patchB2D.T@dictB).T
 
 
 # function to colorize greyscale image using RBG
@@ -133,10 +133,10 @@ def colorizeImg(greyImg,dictR, dictB, dictG,patchSze,mxPatches):
     coderB = SparseCoder(dictionary=dictB)
 
     # transform RGB channels
-    transB = coderR.transform(reshapedR)
+    transR = coderR.transform(reshapedR)
     transB = coderG.transform(reshapedB)
     transG = coderB.transform(reshapedG)
-
+    
     # reconstruct patches
     recPatchB = transR @ dictR
     recPatchB = transB @ dictB
