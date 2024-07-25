@@ -199,17 +199,17 @@ def test(x):
 
         # plot red channel
         fig, axes = plt.subplots(1,3,figsize=(15,5))
-        axes[0].imshow(colorizedImg[:, :, 0],cmap='reds', vmin=0, vmax=255)
+        axes[0].imshow(colorizedImg[:, :, 0],cmap='Reds', vmin=0, vmax=255)
         axes[0].set_title('R')
         axes[0].axis('off')
         
         # plot green channel
-        axes[1].imshow(colorizedImg[:, :, 1],cmap='greens', vmin=0, vmax=255)
+        axes[1].imshow(colorizedImg[:, :, 1],cmap='Greens', vmin=0, vmax=255)
         axes[1].set_title('G')
         axes[1].axis('off')
         
         # plot blue channel
-        axes[2].imshow(colorizedImg[:, :, 2],cmap='blues', vmin=0, vmax=255)
+        axes[2].imshow(colorizedImg[:, :, 2],cmap='Blues', vmin=0, vmax=255)
         axes[2].set_title('B')
         axes[2].axis('off')
         plt.savefig('./rgb'+str(i)+'.png')
