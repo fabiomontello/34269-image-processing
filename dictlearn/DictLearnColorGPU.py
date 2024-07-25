@@ -158,7 +158,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches):
     colorImg = np.array([greyImg,recCr,recCb]).T*255
 
     # convert to RGB
-    colorImgRGB = cv2.cvtColor(colorImg.astype(np.uint8), cv2.COLOR_YCrCb2BGR)
+    colorImgRGB = cv2.cvtColor(colorImg.astype(np.uint8), cv2.COLOR_YCrCb2)
 
     #plt.imshow(colorImg)
     #plt.savefig('./ycrcb.png')
@@ -176,7 +176,7 @@ def test(x):
         N = 1
         imgRGB = trainImg[N+i]
         # convert to greyscale
-        greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_BGR2GRAY)
+        greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_RGB2GRAY)
         # colorize using dictionary learning
         colorizedImg = colorizeImg(greyImg, transY, transCb, transCr, sze, 10000000)
         
@@ -214,5 +214,5 @@ def test(x):
         axes[2].axis('off')
         plt.savefig('./rgb'+str(i)+'.png')
 
-test(5)
+test(20)
 print('done in %.2f minutes' % ((time() - t0)/60.0))

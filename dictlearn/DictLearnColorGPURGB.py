@@ -210,5 +210,5 @@ def test(x):
         axes[2].axis('off')
         plt.savefig('./rgb'+str(i)+'.png')
 
-test(5)
+test(20)
 print('done in %.2f minutes' % ((time() - t0)/60.0))
