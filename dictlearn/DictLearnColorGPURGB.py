@@ -21,7 +21,7 @@ from joblib import Parallel, delayed
 t0=time()
 
 # crop images around the center
-def centerCrop(img, cropSze=(224, 224)):
+def centerGop(img, cropSze=(224, 224)):
     # original size
     w = img.shape[0] 
     h = img.shape[1] 
@@ -51,7 +51,7 @@ def loadDataset(dir):
         # check that the object is not empty
         if img.all() != None:
             # crop then append to dataset
-            dataset.append(centerCrop(img))
+            dataset.append(centerGop(img))
     return dataset
 
 # location of dataset
@@ -69,19 +69,14 @@ def dictLearn(signals,atoms,sparse):
     updated_dictionary, errors, iters = train_dict(signals, dictionary, sparsity_target=sparse)
     return updated_dictionary
 
-# convert to YCrCb
-def convert_to_ycrcb(img):
-    return cv2.cvtColor(img, cv2.COLOR_RGB2YCrCb)
-
 # use more CPU cores for faster training
-trainImgYCrCb = [convert_to_ycrcb(img) for img in trainImg]
 #numCores = multiprocessing.cpu_count()
-#trainImgYCrCb = Parallel(n_jobs=numCores)(delayed(convert_to_ycrcb)(img) for img in trainImg)
+#trainImgRGB = Parallel(n_jobs=numCores)(delayed(convert_to_ycrcb)(img) for img in trainImg)
 
 # separate channels and normalize values
-trainY = np.array([img[:, :, 0] for img in trainImgYCrCb])/255 # Y channel
-trainCr = np.array([img[:, :, 1] for img in trainImgYCrCb])/255 # Cr channel
-trainCb = np.array([img[:, :, 2] for img in trainImgYCrCb])/255 # Cb channel
+trainR = np.array([img[:, :, 0] for img in trainImg])/255 # R channel
+trainG = np.array([img[:, :, 1] for img in trainImg])/255 # G channel
+trainB = np.array([img[:, :, 2] for img in trainImg])/255 # B channel
 
 # extract patches (done in parallel)
 def imgPatch(imgs, szePatch, maxPatch):
@@ -98,67 +93,75 @@ sze = (16, 16)
 mx = 10000000  
 
 # extract patches
-patchY = imgPatch(trainY, sze, mx)
-patchCr = imgPatch(trainCr, sze, mx)
-patchCb = imgPatch(trainCb, sze, mx)
+patchR = imgPatch(trainR, sze, mx)
+patchG = imgPatch(trainG, sze, mx)
+patchB = imgPatch(trainB, sze, mx)
 
 # reshape for dict learning
-patchY2D = patchY.reshape(patchY.shape[0], -1)
-patchCr2D = patchCr.reshape(patchCr.shape[0], -1)
-patchCb2D = patchCb.reshape(patchCb.shape[0], -1)
+patchR2D = patchR.reshape(patchR.shape[0], -1)
+patchG2D = patchG.reshape(patchG.shape[0], -1)
+patchB2D = patchB.reshape(patchB.shape[0], -1)
 
 # number of dict atoms
 numComp = 625 # greater than sze[0]*sze[1]
 sparseTarget=16
 
 # init DictionaryLearning models
-dictY=dictLearn(patchY2D,numComp,sparseTarget)
-dictCr=dictLearn(patchCr2D,numComp,sparseTarget)
-dictCb=dictLearn(patchCb2D,numComp,sparseTarget)
+dictR=dictLearn(patchR2D,numComp,sparseTarget)
+dictG=dictLearn(patchG2D,numComp,sparseTarget)
+dictB=dictLearn(patchB2D,numComp,sparseTarget)
 
 # transform patches using dictionaries
-transY = (patchY2D.T@dictY).T
-transCr = (patchCr2D.T@dictCr).T
-transCb = (patchCb2D.T@dictCb).T
+transR = (patchR2D.T@dictR).T
+transG = (patchG2D.T@dictG).T
+transB = (patchB2D.T@dictB).T
 
 
-# function to colorize greyscale image using YCbCr
-def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches):
+# function to colorize greyscale image using RBG
+def colorizeImg(greyImg,dictR, dictB, dictG,patchSze,mxPatches):
     # normalize values
-    greyImg=greyImg/255
+    greyImgRGB=cv2.cvtColor(greyImg, cv2.COLOR_GRAY2RGB)
+    greyImgR=greyImgRGB[:,:,0]/255
+    greyImgG=greyImgRGB[:,:,1]/255
+    greyImgB=greyImgRGB[:,:,2]/255
     # get patches
-    patchesCb = extract_patches_2d(greyImg, patchSze, max_patches=mxPatches)
-    patchesCr = patchesCb 
-    print(patchesCb.shape)
+    patchesR = extract_patches_2d(greyImgR, patchSze, max_patches=mxPatches)
+    patchesG = extract_patches_2d(greyImgG, patchSze, max_patches=mxPatches)
+    patchesB = extract_patches_2d(greyImgB, patchSze, max_patches=mxPatches)
 
     # reshape to match dictionary
-    reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)
-    reshapedCr = reshapedCb 
+    reshapedR = patchesB.reshape(patchesR.shape[0], -1)
+    reshapedB = patchesB.reshape(patchesB.shape[0], -1)
+    reshapedG = patchesB.reshape(patchesG.shape[0], -1)
 
-    # encode sparse representation of Y channel using the Y dictionary
-    coderY = SparseCoder(dictionary=dictY)
+    # encode sparse representation of R channel using the R dictionary
+    coderR = SparseCoder(dictionary=dictR)
+    coderG = SparseCoder(dictionary=dictG)
+    coderB = SparseCoder(dictionary=dictB)
 
-    # transform Cb and Cr channels
-    transCb = coderY.transform(reshapedCb)
-    transCr = coderY.transform(reshapedCr)
+    # transform RGB channels
+    transB = coderR.transform(reshapedR)
+    transB = coderG.transform(reshapedB)
+    transG = coderB.transform(reshapedG)
 
     # reconstruct patches
-    recPatchCb = transCb @ dictCb
-    recPatchCr = transCr @ dictCr
+    recPatchB = transR @ dictR
+    recPatchB = transB @ dictB
+    recPatchG = transG @ dictG
 
     # return to original shape
-    recPatchCb = recPatchCb.reshape(patchesCb.shape)
-    recPatchCr = recPatchCr.reshape(patchesCr.shape)
+    recPatchR = recPatchB.reshape(patchesR.shape)
+    recPatchB = recPatchB.reshape(patchesB.shape)
+    recPatchG = recPatchG.reshape(patchesG.shape)
 
     # reconstruct channels from patches
-    recCb = reconstruct_from_patches_2d(recPatchCb, greyImg.shape)
-    recCr = reconstruct_from_patches_2d(recPatchCr, greyImg.shape)
+    recR = reconstruct_from_patches_2d(recPatchR, greyImg.shape)
+    recB = reconstruct_from_patches_2d(recPatchB, greyImg.shape)
+    recG = reconstruct_from_patches_2d(recPatchG, greyImg.shape)
 
-    # combine channels (Y=greyImg)
-    colorImg = np.array([greyImg,recCr,recCb]).T*255
+    colorImgRGB = np.array([recR,recG,recB]).T*255
 
     # convert to RGB
-    colorImgRGB = cv2.cvtColor(colorImg.astype(np.uint8), cv2.COLOR_YCrCb2BGR)
 
     #plt.imshow(colorImg)
     #plt.savefig('./ycrcb.png')
@@ -178,7 +181,7 @@ def test(x):
         # convert to greyscale
         greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_RGB2GRAY)
         # colorize using dictionary learning
-        colorizedImg = colorizeImg(greyImg, transY, transCb, transCr, sze, 10000000)
+        colorizedImg = colorizeImg(greyImg, transR, transB, transG, sze, 10000000)
         
         # plot ground truth image
         fig, axes = plt.subplots(1,3,figsize=(15,5))
