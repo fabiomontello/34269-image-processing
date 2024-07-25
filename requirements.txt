@@ -6,6 +6,10 @@ torchvision
 pillow
 pandas
 timm
+scikit-learn
+tensorflow
+nvidia-cuda-nvcc
+git+https://github.com/mukheshpugal/dictlearn_gpu.git@master
 vit-pytorch
 albumentations
 tqdm

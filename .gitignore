@@ -163,7 +163,6 @@ cython_debug/
 
 data
 .vscode
-*.ipynb
 logs
 weights
 *.sh
