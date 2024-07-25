@@ -21,7 +21,7 @@ from joblib import Parallel, delayed
 t0=time()
 
 # crop images around the center
-def centerCrop(img, cropSze=(256, 256)):
+def centerCrop(img, cropSze=(224, 224)):
     # original size
     w = img.shape[0] 
     h = img.shape[1] 
@@ -88,7 +88,7 @@ def imgPatch(imgs, szePatch, maxPatch):
     def extract(img):
         return extract_patches_2d(img, szePatch, max_patches=maxPatch)
     #patches = Parallel(n_jobs=numCores)(delayed(extract)(img) for img in imgs)
-    patches = [extract(img) for img in trainImg]
+    patches = [extract(img) for img in imgs]
 
     return np.concatenate(patches, axis=0)
 
