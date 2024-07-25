@@ -129,6 +129,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches):
     # get patches
     patchesCb = imgPatch([greyImg], patchSze, mxPatches)
     patchesCr = patchesCb 
+    print(patchesCb.shape)
 
     # reshape to match dictionary
     reshapedCb = patchesCb.reshape(patchesCb.shape[0], -1)
