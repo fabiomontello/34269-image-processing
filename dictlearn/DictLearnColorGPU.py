@@ -160,7 +160,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches):
     colorImg = np.array([greyImg,recCr,recCb]).T*255
 
     # convert to RGB
-    colorImgRGB = cv2.cvtColor(colorImg.astype(np.uint8), cv2.COLOR_YCrCb2BGR)
+    colorImgRGB = cv2.cvtColor(colorImg.astype(np.uint8), cv2.COLOR_YCrCb2RGB)
 
     #plt.imshow(colorImg)
     #plt.savefig('./ycrcb.png')
