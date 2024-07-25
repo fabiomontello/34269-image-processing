@@ -57,6 +57,8 @@ def loadDataset(dir):
 # location of dataset
 imgDir = '/zhome/ad/a/211839/34269-image-processing/data/imagenet-val/imagenet-val/val/'
 trainImg=loadDataset(imgDir)
+testDir = '/zhome/ad/a/211839/34269-image-processing/data/imagenet-val/imagenet-val/tst/'
+testImg=loadDataset(testDir)
 
 # create and learn dictionary
 def dictLearn(signals,atoms,sparse):
@@ -173,8 +175,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches):
 def test(x):
     for i in range(x):
         # test image
-        N = 1
-        imgRGB = trainImg[N+i]
+        imgRGB = testImg[i]
         # convert to greyscale
         greyImg = cv2.cvtColor(imgRGB, cv2.COLOR_RGB2GRAY)
         # colorize using dictionary learning
@@ -214,5 +215,10 @@ def test(x):
         axes[2].axis('off')
         plt.savefig('./rgb'+str(i)+'.png')
 
-test(5)
+        # save just the image separately
+        cv2.imwrite('./plainImg'+str(i)+'.png',colorizedImg)
+
+
+
+test(3)
 print('done in %.2f minutes' % ((time() - t0)/60.0))
