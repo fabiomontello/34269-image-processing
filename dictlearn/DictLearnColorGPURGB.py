@@ -18,7 +18,7 @@ from dictlearn_gpu.utils import dct_dict_1d
 t0=time()
 
 # crop images around the center
-def centerGop(img, cropSze=(256, 256)):
+def centerGop(img, cropSze=(224, 224)):
     # original size
     w = img.shape[0] 
     h = img.shape[1] 

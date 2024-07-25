@@ -21,7 +21,7 @@ from joblib import Parallel, delayed
 t0=time()
 
 # crop images around the center
-def centerCrop(img, cropSze=(256, 256)):
+def centerCrop(img, cropSze=(224, 224)):
     # original size
     w = img.shape[0] 
     h = img.shape[1] 
