@@ -127,7 +127,7 @@ def colorizeImg(greyImg,dictY, dictCb, dictCr,patchSze,mxPatches):
     # normalize values
     greyImg=greyImg/255
     # get patches
-    patchesCb = imgPatch([greyImg], patchSze, mxPatches)
+    patchesCb = imgPatch(greyImg, patchSze, mxPatches)
     patchesCr = patchesCb 
     print(patchesCb.shape)
 
